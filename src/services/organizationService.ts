@@ -1,39 +1,39 @@
 import axios from 'axios';
 import { Organization } from "../models/organizations";
 
-axios.defaults.baseURL = 'http://localhost:8080/api/organization';
+axios.defaults.baseURL = 'http://localhost:8080/api/';
 
 export const getOrganizations = async (): Promise<Organization[]> => {
-    const response = await axios.get('/organization');
+    const response = await axios.get('organization/organization');
     return response.data;
 };
 
 export const getOrganizationById = async (id: number): Promise<Organization> => {
-    const response = await axios.get(`/organizationById/${id}`);
+    const response = await axios.get(`organization/organizationById/${id}`);
     return response.data;
 };
 
 export const createOrganization = async (organization: Organization): Promise<Organization> => {
-    const response = await axios.post('/addOrganizations', organization);
+    const response = await axios.post('organization/addOrganizations', organization);
     return response.data;
 };
 
 export const updateOrganization = async (id: number, organization: Organization): Promise<Organization> => {
-    const response = await axios.put(`/updateOrganizations/${id}`, organization);
+    const response = await axios.put(`organization/updateOrganizations/${id}`, organization);
     return response.data;
 };
 
 export const deleteOrganization = async (organizationId: number): Promise<void> => {
-    await axios.delete(`/deleteOrganizations/${organizationId}`);
+    await axios.delete(`organization/deleteOrganizations/${organizationId}`);
 };
 
 export const loginOrganization = async (organization: Organization): Promise<Organization> => {
-    const response = await axios.post('/login', organization);
+    const response = await axios.post('organization/login', organization);
     return response.data;
 };
 
 export const signupOrganizationImage = async (formData: FormData): Promise<Organization> => {
-    const response = await axios.post('/upload', formData, {
+    const response = await axios.post('organization/upload', formData, {
         headers: {
             'Content-Type': 'multipart/form-data',
         },

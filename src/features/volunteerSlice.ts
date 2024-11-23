@@ -14,7 +14,6 @@ import { setUserCookie, getUserFromCookie, removeUserCookie } from '../services/
 interface VolunteerState {
     volunteers: Volunteer[];
     selectedVolunteer: Volunteer | undefined;
-    loggedInUser: Volunteer | undefined;
     isConect: boolean;
     loading: boolean;
     error: string | null;
@@ -23,7 +22,6 @@ interface VolunteerState {
 const initialState: VolunteerState = {
     volunteers: [],
     selectedVolunteer: undefined,
-    loggedInUser: undefined,
     isConect: false,
     loading: false,
     error: null,
@@ -233,10 +231,6 @@ const volunteerSlice = createSlice({
         builder.addCase(loginExistingVolunteers.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message || 'Unknown error occurred';
-        });
-
-        builder.addCase(setGoogleUser.fulfilled, (state, action: PayloadAction<Volunteer>) => {
-            state.loggedInUser = action.payload;
         });
 
     },
