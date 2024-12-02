@@ -2,10 +2,9 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { signupNewVolunteer } from '../../features/volunteerSlice';
 import { RootState } from '../../store/store';
-import '../../assets/styles/Signup.css';
 import { useNavigate } from 'react-router-dom';
-import { AnyAction } from '@reduxjs/toolkit';
 import { AppDispatch } from '../../store/store';
+import { TextField, Button, Checkbox, FormControl, InputLabel, Select, MenuItem, FormHelperText, Box, CircularProgress, Grid, Typography } from '@mui/material';
 
 const SignupV: React.FC = () => {
     const [role, setRole] = useState('');
@@ -25,7 +24,6 @@ const SignupV: React.FC = () => {
 
     const navigate = useNavigate();
     const dispatch = useDispatch<AppDispatch>();
-
     const selectedVolunteer = useSelector((state: RootState) => state.volunteers.selectedVolunteer);
 
     const validateBirth = () => {
@@ -77,7 +75,6 @@ const SignupV: React.FC = () => {
         return true;
     };
 
-
     const handleSubmit = async () => {
         const isBirthValid = validateBirth();
         const isAmountVolunteersValid = validateAmountVolunteers();
@@ -101,7 +98,7 @@ const SignupV: React.FC = () => {
             try {
                 const result = await dispatch(
                     signupNewVolunteer({ volunteerData, image })
-                ) as AnyAction;
+                );
 
                 if (result.meta.requestStatus === 'fulfilled') {
                     navigate('/volunteer-details');
@@ -116,101 +113,138 @@ const SignupV: React.FC = () => {
         }
     };
 
+    return (
+        <Box sx={{ padding: 3, backgroundColor: '#f5f5f5', borderRadius: 2, boxShadow: 3 }}>
+            <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold', textAlign: 'center' }}>Volunteer Registration</Typography>
+            <form className="formS">
 
-    return (<form className="formS">
-        <h2>Volunteer Registration</h2>
+                <TextField
+                    label="Role"
+                    value={role}
+                    onChange={(e) => setRole(e.target.value)}
+                    fullWidth
+                    required
+                    sx={{
+                        marginBottom: 2,
+                        borderRadius: 2,
+                        '& .MuiInputBase-root': { backgroundColor: '#fff', borderRadius: '8px' }
+                    }}
+                />
 
-        <div className="form-group">
-            <input
-                type="text"
-                value={role}
-                onChange={(e) => setRole(e.target.value)}
-                placeholder="Role"
-                required
-            />
-        </div>
+                <FormControl fullWidth required sx={{ marginBottom: 2, borderRadius: 2 }}>
+                    <InputLabel>Gender</InputLabel>
+                    <Select
+                        value={gender}
+                        onChange={(e) => setGender(e.target.value)}
+                        sx={{
+                            '& .MuiSelect-icon': { color: '#3f51b5' },
+                            '& .MuiOutlinedInput-notchedOutline': { borderColor: '#3f51b5' }
+                        }}
+                    >
+                        <MenuItem value="">Select Gender</MenuItem>
+                        <MenuItem value="Female">Female</MenuItem>
+                        <MenuItem value="Male">Male</MenuItem>
+                    </Select>
+                    {errors.region && <FormHelperText error>{errors.region}</FormHelperText>}
+                </FormControl>
 
-        <div className="form-group">
-            <select value={gender} onChange={(e) => setGender(e.target.value)} required>
-                <option value="">Select Gender</option>
-                <option value="Female">Female</option>
-                <option value="Male">Male</option>
-            </select>
-        </div>
+                <TextField
+                    label="Date of Birth"
+                    type="date"
+                    value={birth}
+                    onChange={(e) => setBirth(e.target.value)}
+                    onBlur={validateBirth}
+                    fullWidth
+                    required
+                    InputLabelProps={{ shrink: true }}
+                    sx={{
+                        marginBottom: 2,
+                        '& .MuiInputBase-root': { backgroundColor: '#fff', borderRadius: '8px' }
+                    }}
+                    max={new Date(new Date().setFullYear(new Date().getFullYear() - 10)).toISOString().split('T')[0]}
+                />
+                {errors.birth && <FormHelperText error>{errors.birth}</FormHelperText>}
 
-        <div className="form-group">
-            <input
-                type="date"
-                value={birth}
-                onChange={(e) => setBirth(e.target.value)}
-                max={new Date(new Date().setFullYear(new Date().getFullYear() - 10)).toISOString().split('T')[0]}
-                onBlur={validateBirth}
-                required
-            />
-            {errors.birth && <div className="error-icon" title={errors.birth}></div>}
-        </div>
+                <FormControl fullWidth required sx={{ marginBottom: 2 }}>
+                    <label>
+                        <Checkbox
+                            checked={experience}
+                            onChange={(e) => setExperience(e.target.checked)}
+                        />
+                        Previous volunteering experience
+                    </label>
+                </FormControl>
 
-        <div className="form-group">
-            <div className="checkbox-wrapper-21">
-                <label>
-                    <input
-                        type="checkbox"
-                        checked={experience}
-                        onChange={(e) => setExperience(e.target.checked)}
-                    />
-                    Previous volunteering experience
-                </label>
-            </div>
-        </div>
+                <TextField
+                    label="Number of Volunteers"
+                    type="number"
+                    value={amountVolunteers}
+                    onChange={(e) => setAmountVolunteers(Number(e.target.value))}
+                    onBlur={validateAmountVolunteers}
+                    fullWidth
+                    required
+                    sx={{
+                        marginBottom: 2,
+                        '& .MuiInputBase-root': { backgroundColor: '#fff', borderRadius: '8px' }
+                    }}
+                />
+                {errors.amountVolunteers && <FormHelperText error>{errors.amountVolunteers}</FormHelperText>}
 
-        <div className="form-group">
-            <label htmlFor="amountVolunteers">Enter the number of volunteers:</label>
-            <input
-                type="number"
-                id="amountVolunteers"
-                value={amountVolunteers}
-                onChange={(e) => setAmountVolunteers(Number(e.target.value))}
-                onBlur={validateAmountVolunteers}
-                placeholder="Number of Volunteers"
-                required
-            />
-            {errors.amountVolunteers && <div className="error-icon" title={errors.amountVolunteers}></div>}
-        </div>
+                <FormControl fullWidth required sx={{ marginBottom: 2 }}>
+                    <InputLabel>Region</InputLabel>
+                    <Select
+                        value={region}
+                        onChange={(e) => setRegion(e.target.value)}
+                        onBlur={validateRegion}
+                        sx={{
+                            '& .MuiSelect-icon': { color: '#3f51b5' },
+                            '& .MuiOutlinedInput-notchedOutline': { borderColor: '#3f51b5' }
+                        }}
+                    >
+                        <MenuItem value="">Select Region</MenuItem>
+                        <MenuItem value="NORTH">North</MenuItem>
+                        <MenuItem value="SOUTH">South</MenuItem>
+                        <MenuItem value="CENTER">Center</MenuItem>
+                        <MenuItem value="JERUSALEM">Jerusalem</MenuItem>
+                        <MenuItem value="GENERAL">General</MenuItem>
+                    </Select>
+                    {errors.region && <FormHelperText error>{errors.region}</FormHelperText>}
+                </FormControl>
 
-        <div className="form-group">
-            <select value={region} onChange={(e) => setRegion(e.target.value)} onBlur={validateRegion} required>
-                <option value="">Select Region</option>
-                <option value="NORTH">North</option>
-                <option value="SOUTH">South</option>
-                <option value="CENTER">Center</option>
-                <option value="JERUSALEM">Jerusalem</option>
-                <option value="GENERAL">General</option>
-            </select>
-            {errors.region && <div className="error-icon" title={errors.region}></div>}
-        </div>
+                <TextField
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => setImage(e.target.files?.length === 1 ? e.target.files[0] : null)}
+                    fullWidth
+                    sx={{
+                        marginBottom: 2,
+                        '& .MuiInputBase-root': { backgroundColor: '#fff', borderRadius: '8px' }
+                    }}
+                    onBlur={validateImage}
+                />
+                {errors.image && <FormHelperText error>{errors.image}</FormHelperText>}
 
-        <div className="form-group">
-            <input
-                type="file"
-                accept="image/*"
-                onChange={(e) => setImage(e.target.files?.length === 1 ? e.target.files[0] : null)}
-                onBlur={validateImage}
-            />
-            {errors.image && <div className="error-icon" title={errors.image}></div>}
-        </div>
-
-
-        <div className="button-container">
-            <button
-                type="button"
-                className="button register-button"
-                onClick={handleSubmit}
-            >
-                Register as Volunteer
-            </button>
-        </div>
-
-    </form >
+                <Grid container justifyContent="center">
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={handleSubmit}
+                        sx={{
+                            padding: '14px',
+                            fontSize: '1.1rem',
+                            borderRadius: '25px',
+                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+                            marginTop: 2,
+                            width: '50%',
+                            '&:hover': { backgroundColor: '#1976d2' }
+                        }}
+                    >
+                        {<CircularProgress size={24} />}
+                        Register as Volunteer
+                    </Button>
+                </Grid>
+            </form>
+        </Box>
     );
 };
 

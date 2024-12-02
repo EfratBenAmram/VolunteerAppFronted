@@ -12,8 +12,8 @@ export interface Volunteer {
   experience: boolean;
   amountVolunteers: number;
   region: string;
-  volunteerReuest: VolunteerRequest;
-  volunteerReview: VolunteerReview;
+  volunteerReuest: VolunteerRequest[];
+  volunteerReview: VolunteerReview[];
 }
 
 export interface VolunteerRequest {
