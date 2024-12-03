@@ -1,13 +1,12 @@
-import React, { useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import HomePage from './components/HomePage';
 import AuthForms from './components/auth/AuthForms';
-import SignupV from './components/volunteer/Signup';
-import SignupO from './components/organizations/Signup';
-import { useDispatch } from 'react-redux';
-import { loadVolunteerFromCookie } from './features/volunteerSlice';
+import SignupV from './components/auth/SignupV';
+import SignupO from './components/auth/SignupO';
 import VolunteerDetails from './components/volunteer/VolunteerDetails';
-import ProtectedRoute from './components/ProtectedRoute';
+import ProtectedRoute from './components/volunteer/ProtectedRoute';
+import Navbar from './components/volunteer/Navbar';
 
 // import VolunteerList from './components/volunteerTry/Volunteer1';
 // import VolunteerForm from './components/volunteerTry/Volunteer2';
@@ -15,11 +14,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 // import LoginSignupPopup from './components/volunteer/LoginSignupPopup';
 
 const App: React.FC = () => {
-    const dispatch = useDispatch();
 
-    useEffect(() => {
-        dispatch(loadVolunteerFromCookie());
-    }, [dispatch]);
 
     return (
         <>
@@ -27,16 +22,12 @@ const App: React.FC = () => {
             <h1>Volunteer Matching Platform</h1>
             <VolunteerList />
             <VolunteerForm />
-            <VolunteerDetails /> */}
+            <VolunteerDetails /> 
+            <HostagesTicker/>*/}
+            
             <Routes>
-                <Route
-                    path="/volunteer-details"
-                    element={
-                        <ProtectedRoute>
-                            <VolunteerDetails />
-                        </ProtectedRoute>
-                    }
-                />
+                <Route path="/volunteer-details" element={<ProtectedRoute><VolunteerDetails /></ProtectedRoute>} />
+                <Route path="/volunteer" element={<ProtectedRoute><Navbar /></ProtectedRoute>} />
                 <Route path="/" element={<HomePage />} />
                 <Route path="/login" element={<AuthForms isLogin={true} />} />
                 <Route path="/signup" element={<AuthForms isLogin={false} />} />

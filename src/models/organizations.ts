@@ -9,3 +9,8 @@ export interface Organization {
     topicVolunteers: string[];
     region: string;
 }
+
+export interface OrganizationLogin {
+    email: string;
+    password: string;
+}

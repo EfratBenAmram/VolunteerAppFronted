@@ -1,10 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import SignOut from './auth/SignOut';
-import Cookies from 'js-cookie';
 
 const HomePage: React.FC = () => {
-    const role = Cookies.get('role');
+    const role = null;
     return (
         <>
             <div>

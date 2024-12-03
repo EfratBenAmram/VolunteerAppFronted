@@ -1,5 +1,10 @@
 import { Organization } from "./organizations";
 
+export interface VolunteerLogin {
+  email: string;
+  password: string;
+}
+
 export interface Volunteer {
   volunteerId: number;
   name: string;
@@ -12,23 +17,32 @@ export interface Volunteer {
   experience: boolean;
   amountVolunteers: number;
   region: string;
-  volunteerReuest: VolunteerRequest[];
+  volunteerRequests: VolunteerRequests[];
   volunteerReview: VolunteerReview[];
 }
 
-export interface VolunteerRequest {
-    requestId: number;
-    volunteer: Volunteer;
-    comments: string;
-    localDate: Date;
-    availableTime: Date;
-    volunteerRequestTypes: string;
+export interface VolunteerRequests {
+  requestId: number;
+  volunteer: Volunteer;
+  comments: string;
+  localDate: Date;
+  availableTime: Date;
+  volunteerRequestTypes: string;
+  volunteerTypes: VolunteerType[];
 }
 
 export interface VolunteerReview {
-  requestId: number;
+  reviewId: number;
   organization: Organization;
   volunteer: Volunteer;
   comment: String;
   likes: number;
+}
+
+export interface VolunteerType {
+  volunteerTypeId: number;
+  name: string;
+  minAge: number;
+  maxAge: number;
+  topicVolume: string;
 }

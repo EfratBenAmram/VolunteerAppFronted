@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Organization } from "../models/organizations";
+import { Organization, OrganizationLogin } from "../models/organizations";
 
 axios.defaults.baseURL = 'http://localhost:8080/api/';
 
@@ -27,7 +27,7 @@ export const deleteOrganization = async (organizationId: number): Promise<void> 
     await axios.delete(`organization/deleteOrganizations/${organizationId}`);
 };
 
-export const loginOrganization = async (organization: Organization): Promise<Organization> => {
+export const loginOrganization = async (organization: OrganizationLogin): Promise<Organization> => {
     const response = await axios.post('organization/login', organization);
     return response.data;
 };

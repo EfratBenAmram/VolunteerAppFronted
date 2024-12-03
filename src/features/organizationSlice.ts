@@ -9,6 +9,7 @@ import {
     loginOrganization,
 } from '../services/organizationService';
 import { Organization } from '../models/organizations';
+import { VolunteerLogin } from '../models/volunteers';
 
 interface OrganizationState {
     organizations: Organization[];
@@ -90,9 +91,9 @@ export const setGoogleUser = createAsyncThunk('users/setGoogleUser', async (goog
 
 export const loginExistingOrganization = createAsyncThunk(
     'organizations/loginExistingOrganization',
-    async ({ organizationData }: { organizationData: Organization }, thunkAPI) => {
+    async ({ email, password }: VolunteerLogin, thunkAPI) => {
         try {
-            const response = await loginOrganization(organizationData);
+            const response = await loginOrganization({ email, password });
             return response;
         } catch (error) {
             const err = error as { response?: { data?: { message?: string } } };

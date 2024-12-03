@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Volunteer } from "../models/volunteers";
+import { Volunteer, VolunteerLogin } from "../models/volunteers";
 
 axios.defaults.baseURL = 'http://localhost:8080/api/';
 
@@ -27,7 +27,7 @@ export const deleteVolunteer = async (volunteerId: number): Promise<void> => {
     await axios.delete(`volunteer/deleteVolunteers/${volunteerId}`);
 };
 
-export const loginVolunteer = async (volunteer: Volunteer): Promise<Volunteer> => {
+export const loginVolunteer = async (volunteer: VolunteerLogin): Promise<Volunteer> => {
     const response = await axios.post('volunteer/login', volunteer);
     return response.data;
 };

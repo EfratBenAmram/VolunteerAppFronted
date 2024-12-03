@@ -8,8 +8,7 @@ import {
     signupVolunteerImage,
     loginVolunteer,
 } from '../services/volunteerService';
-import { Volunteer } from '../models/volunteers';
-import { setUserCookie, getUserFromCookie, removeUserCookie } from '../services/cookieService';
+import { Volunteer, VolunteerLogin } from '../models/volunteers';
 
 interface VolunteerState {
     volunteers: Volunteer[];
@@ -59,7 +58,7 @@ export const signupNewVolunteer = createAsyncThunk(
         try {
             const formData = new FormData();
             if (!image) {
-                const defaultImagePath = volunteerData.gender === 'Female' ? '../../assets/images/1' : '../../assets/images/2';
+                const defaultImagePath = volunteerData.gender === 'Female' ? '../../assets/images/1.jpg' : '../../assets/images/2.jpj';
                 const imageResponse = await fetch(defaultImagePath);
                 const imageBlob = await imageResponse.blob();
                 image = new File([imageBlob], volunteerData.gender === 'Female' ? '1.jpg' : '2.jpg', { type: 'image/jpeg' });
@@ -71,7 +70,6 @@ export const signupNewVolunteer = createAsyncThunk(
             formData.append('image', image);
 
             const response = await signupVolunteerImage(formData);
-            setUserCookie(response);
             return response;
         } catch (error) {
             const err = error as { response?: { data?: { message?: string } } };
@@ -88,22 +86,21 @@ export const setGoogleUser = createAsyncThunk('users/setGoogleUser', async (goog
     return googleUser;
 });
 
-
 export const loginExistingVolunteers = createAsyncThunk(
     'volunteers/loginExistingVolunteers',
-    async ({ volunteerData }: { volunteerData: Volunteer }, thunkAPI) => {
-        try {
-            const response = await loginVolunteer(volunteerData);
-            setUserCookie(response);
-            return response;
-        } catch (error) {
-            const err = error as { response?: { data?: { message?: string } } };
-            return thunkAPI.rejectWithValue({
-                errorMessage: err.response?.data?.message || 'An unexpected error occurred',
-            });
-        }
+    async ({ email, password }: VolunteerLogin, thunkAPI) => {
+      try {
+        const response = await loginVolunteer({ email, password });
+        return response;
+      } catch (error) {
+        const err = error as { response?: { data?: { message?: string } } };
+        return thunkAPI.rejectWithValue({
+          errorMessage: err.response?.data?.message || 'An unexpected error occurred',
+        });
+      }
     }
-);
+  );
+  
 
 // Slice
 const volunteerSlice = createSlice({
@@ -117,17 +114,7 @@ const volunteerSlice = createSlice({
         logoutVolunteer: (state) => {
             state.selectedVolunteer = undefined;
             state.isConect = false;
-            removeUserCookie();
         },
-        loadVolunteerFromCookie: (state) => {
-            const user = getUserFromCookie();
-            if (user) {
-                state.selectedVolunteer = user;
-                state.isConect = true;
-            }
-        },
-
-
     },
     extraReducers: (builder) => {
         // Fetch Volunteers
@@ -237,4 +224,4 @@ const volunteerSlice = createSlice({
 });
 
 export default volunteerSlice.reducer;
-export const { saveVolunteerData, logoutVolunteer, loadVolunteerFromCookie } = volunteerSlice.actions;
+export const { saveVolunteerData, logoutVolunteer } = volunteerSlice.actions;
