@@ -5,7 +5,7 @@ import {
     createVolunteerType,
     updateVolunteerType,
     deleteVolunteerType,
-} from '../services/volunteerService';
+} from '../services/volunteerTypeService';
 import { VolunteerType } from '../models/volunteers';
 
 interface VolunteerTypeState {

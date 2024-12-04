@@ -1,12 +1,15 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store/store';
-
+import {
+    Box,
+} from '@mui/material';
+// import GoogleMaps from './GoogleMaps';
 const VolunteerDetails: React.FC = () => {
     const selectedVolunteer = useSelector(
         (state: RootState) => state.volunteers.selectedVolunteer
     );
-
+    
     if (!selectedVolunteer) {
         return <p className="error-message">לא נבחר מתנדב להצגה</p>;
     }
@@ -24,6 +27,8 @@ const VolunteerDetails: React.FC = () => {
         volunteerReview,
     } = selectedVolunteer;
 
+
+
     const renderHearts = (likes: number) => {
         const hearts = [];
         for (let i = 0; i < 5; i++) {
@@ -33,11 +38,22 @@ const VolunteerDetails: React.FC = () => {
         }
         return hearts;
     };
-
+    // const handleSelectedLocation = (location: { description: string; latitude: number; longitude: number }) => {
+    //     console.log('Location selected:', location);
+    //     console.log('Description:', location.description);
+    //     console.log('Latitude:', location.latitude);
+    //     console.log('Longitude:', location.longitude);
+    //   };
+      
     return (
         <>
-            <style>
-                {`
+            <Box
+                sx={{
+                    height: '100vh',
+                }}
+            >
+                <style>
+                    {`
                     .volunteer-details-container {
                         display: flex;
                         flex-direction: column;
@@ -70,56 +86,66 @@ const VolunteerDetails: React.FC = () => {
                         color: lightgray;
                     }
                 `}
-            </style>
-            <div className="volunteer-details-container">
-                {/* פרטי המתנדב */}
-                <h2>פרטי מתנדב</h2>
-                <p><strong>שם:</strong> {name}</p>
-                <p><strong>אימייל:</strong> {email}</p>
-                <p><strong>טלפון:</strong> {phone}</p>
-                <p><strong>תפקיד:</strong> {role}</p>
-                <p><strong>מין:</strong> {gender}</p>
-                <p><strong>תאריך לידה:</strong> {birth}</p>
-                <p><strong>ניסיון:</strong> {experience ? 'כן' : 'לא'}</p>
-                <p><strong>אזור:</strong> {region}</p>
+                </style>
+                <div className="volunteer-details-container">
+                    {/* פרטי המתנדב */}
+                    <h2>פרטי מתנדב</h2>
+                    <p><strong>שם:</strong> {name}</p>
+                    <p><strong>אימייל:</strong> {email}</p>
+                    <p><strong>טלפון:</strong> {phone}</p>
+                    <p><strong>תפקיד:</strong> {role}</p>
+                    <p><strong>מין:</strong> {gender}</p>
+                    <p><strong>תאריך לידה:</strong> {birth}</p>
+                    <p><strong>ניסיון:</strong> {experience ? 'כן' : 'לא'}</p>
+                    <p><strong>אזור:</strong> {region}</p>
 
-                {/* בקשות התנדבות */}
-                <h2>בקשות התנדבות</h2>
-                {volunteerRequests && volunteerRequests.length > 0 ? (
-                    <ul>
-                        {volunteerRequests.map((request, index) => (
-                            <li key={index}>
-                                <strong>בקשה {index + 1}:</strong>
-                                <p><strong>תיאור:</strong> {request.comments}</p>
-                                <p><strong>זמן פנוי:</strong> {request.availableTime}</p>
-                                <p><strong>תאריך:</strong> {new Date(request.localDate).toLocaleDateString()}</p>
-                                <p><strong>סוגי התנדבות:</strong> {request.volunteerTypes?.map((type) => type.name).join(', ') || 'לא זמין'}</p>
-                            </li>
-                        ))}
-                    </ul>
-                ) : (
-                    <p>אין בקשות התנדבות</p>
-                )}
+                    {/* בקשות התנדבות */}
+                    <h2>בקשות התנדבות</h2>
+                    {volunteerRequests && volunteerRequests.length > 0 ? (
+                        <ul>
+                            {volunteerRequests.map((request, index) => (
+                                <li key={index}>
+                                    <strong>בקשה {index + 1}:</strong>
+                                    <p><strong>תיאור:</strong> {request.comments}</p>
+                                    <p><strong>מיקום:</strong> {request.positionX}</p>
+                                    <p><strong>מיקום:</strong> {request.positionY}</p>
+                                    <p><strong>זמן פנוי:</strong> {request.availableTime}</p>
+                                    <p><strong>תאריך:</strong> {new Date(request.localDate).toLocaleDateString()}</p>
+                                    <p><strong>סוגי התנדבות:</strong> {request.volunteerTypes?.map((type) => type.name).join(', ') || 'לא זמין'}</p>
+                                </li>
+                            ))}
+                        </ul>
+                    ) : (
+                        <p>אין בקשות התנדבות</p>
+                    )}
 
-                {/* תגובות */}
-                <h2>תגובות</h2>
-                {volunteerReview && volunteerReview.length > 0 ? (
-                    <ul>
-                        {volunteerReview.map((review) => (
-                            <li key={review.reviewId}>
-                                <p><strong>ארגון:</strong> {review.organization.name}</p>
-                                <p><strong>תגובה:</strong> {review.comment}</p>
-                                <div>{renderHearts(review.likes)}</div>
-                            </li>
-                        ))}
-                    </ul>
-                ) : (
-                    <p>אין תגובות</p>
-                )}
-                
-            </div>
+                    {/* תגובות */}
+                    <h2>תגובות</h2>
+                    {volunteerReview && volunteerReview.length > 0 ? (
+                        <ul>
+                            {volunteerReview.map((review) => (
+                                <li key={review.reviewId}>
+                                    <p><strong>ארגון:</strong> {review.organization.name}</p>
+                                    <p><strong>תגובה:</strong> {review.comment}</p>
+                                    <div>{renderHearts(review.likes)}</div>
+                                </li>
+                            ))}
+                        </ul>
+                    ) : (
+                        <p>אין תגובות</p>
+                    )}
+                </div>
+            </Box>
+            <div style={{ padding: '20px' }}>
+      {/* <GoogleMaps 
+        label="Enter a location" 
+        func={handleSelectedLocation} 
+      /> */}
+    </div>
+
         </>
     );
+
 };
 
 export default VolunteerDetails;

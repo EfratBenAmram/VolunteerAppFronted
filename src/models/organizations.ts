@@ -6,7 +6,6 @@ export interface Organization {
     phone: string;
     orgGoals: string;
     recommendationPhones: string;
-    topicVolunteers: string[];
     region: string;
 }
 

@@ -27,8 +27,10 @@ export interface VolunteerRequests {
   comments: string;
   localDate: Date;
   availableTime: Date;
-  volunteerRequestTypes: string;
-  volunteerTypes: VolunteerType[];
+  availableDate: Date;
+  volunteerTypes?: VolunteerType[] | undefined;
+  positionX: number;
+  positionY: number;
 }
 
 export interface VolunteerReview {
