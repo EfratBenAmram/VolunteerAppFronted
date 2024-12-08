@@ -4,7 +4,7 @@ import { signupNewVolunteer } from '../../features/volunteerSlice';
 import { RootState, AppDispatch } from '../../store/store';
 import { useNavigate } from 'react-router-dom';
 import { TextField, Button, Checkbox, FormControl, InputLabel, Select, MenuItem, CircularProgress, Box, Typography, Card, CardContent, InputAdornment, FormHelperText } from '@mui/material';
-import { Person, DateRange, LocationOn, PhotoCamera, Group } from '@mui/icons-material';
+import { Person, DateRange, PhotoCamera, Group } from '@mui/icons-material';
 
 const SignupV: React.FC = () => {
     const [formData, setFormData] = useState({

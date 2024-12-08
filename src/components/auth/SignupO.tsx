@@ -21,7 +21,7 @@ const SignupO: React.FC = () => {
         orgGoals: '',
         referencePhones: ['', '', ''],
         // recommendationLetters: [null, null, null],
-        logo: null, 
+        image: null, 
         region: '',
     });
     
@@ -29,7 +29,7 @@ const SignupO: React.FC = () => {
         orgGoals: '',
         referencePhones: ['', '', ''],
         recommendationLetters: ['', '', ''],
-        logo: '',
+        image: '',
         region: '',
     });
     const [isLoading, setIsLoading] = useState(false);
@@ -53,7 +53,7 @@ const SignupO: React.FC = () => {
             if (!value.trim()) error = 'Phone number is required.';
             else if (!/^0[2-9]\d{8}$/.test(value)) error = 'Invalid phone number format.';
         } else if (field === 'recommendationLetters' && !value) error = 'File is required.';
-        else if (field === 'logo' && value && !['image/jpeg', 'image/png'].includes(value.type)) error = 'Only JPEG and PNG files are allowed.';
+        else if (field === 'image' && value && !['image/jpeg', 'image/png'].includes(value.type)) error = 'Only JPEG and PNG files are allowed.';
         setErrors(prev => {
             const updated = { ...prev };
             if (index !== -1) updated[field][index] = error;
@@ -173,27 +173,27 @@ const SignupO: React.FC = () => {
                                 </Grid> */}
 
                                 <Typography sx={{ width: '100%', textAlign: 'center', color: '#4CAF50', marginBottom: 2 }}>
-                                    Optionally upload your organization's logo (JPEG/PNG).
+                                    Optionally upload your organization's image (JPEG/PNG).
                                 </Typography>
                                 <Grid container spacing={2} sx={{ marginTop: 2 }}>
                                     <Grid item xs={12} sm={6}>
-                                        <label htmlFor="logo-upload">
+                                        <label htmlFor="image-upload">
                                             <Box component="span" sx={fileFieldStyle}>
                                                 <CloudUploadIcon sx={{ marginRight: 1 }} />
-                                                {formData.logo ? formData.logo.name : 'Choose logo image'}
+                                                {formData.image ? formData.image.name : 'Choose image image'}
                                             </Box>
                                         </label>
                                         <input
-                                            id="logo-upload"
+                                            id="image-upload"
                                             type="file"
                                             accept="image/jpeg, image/png"
-                                            onChange={(e) => handleInputChange('logo', -1, e.target.files ? e.target.files[0] : null)}
-                                            onBlur={() => validateField('logo', formData.logo)}
+                                            onChange={(e) => handleInputChange('image', -1, e.target.files ? e.target.files[0] : null)}
+                                            onBlur={() => validateField('image', formData.image)}
                                             hidden
                                         />
-                                        {errors.logo && (
+                                        {errors.image && (
                                             <Typography color="error" variant="body2">
-                                                {errors.logo}
+                                                {errors.image}
                                             </Typography>
                                         )}
                                     </Grid>
