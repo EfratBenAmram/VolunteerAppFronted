@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store/store';
 import { logoutVolunteer } from "../../features/volunteerSlice";
 import { getVolunteerWithImage } from '../../services/volunteerService';
+import imagePath from '../../assets/images/image.jpg';
 
 const NavbarVolunteer: React.FC = () => {
     const { selectedVolunteer } = useSelector((state: RootState) => state.volunteers);
@@ -14,17 +15,19 @@ const NavbarVolunteer: React.FC = () => {
 
     useEffect(() => {
         const fetchImage = async () => {
-            try {
-                if (!selectedVolunteer?.volunteerId) return; 
-                const response = await getVolunteerWithImage(selectedVolunteer.volunteerId);
-                console.log('Response data:', response);
-                if (response.image) {
-                    setImageSrc('data:image/jpeg;base64,' + response.image);
-                } else {
-                    console.error("תמונה לא נמצאה במידע שהתקבל");
+            if (!selectedVolunteer?.volunteerId) return;
+            if (selectedVolunteer.imageVol) {
+                try {
+                    const response = await getVolunteerWithImage(selectedVolunteer.volunteerId);
+                    console.log('Response data:', response);
+                    if (response.image) {
+                        setImageSrc('data:image/jpeg;base64,' + response.image);
+                    }
+                } catch (error) {
+                    console.error("שגיאה בשליפת התמונה:", error);
                 }
-            } catch (error) {
-                console.error("שגיאה בשליפת התמונה:", error);
+            } else {
+                setImageSrc(imagePath);
             }
         };
 

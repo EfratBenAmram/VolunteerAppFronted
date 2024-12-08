@@ -14,6 +14,8 @@ import NavbarVolunteer from './components/volunteer/NavbarVolunteer';
 import VolunteerRequestForm from './components/volunteer/VolunteerRequestForm';
 import VolunteerInvitationDetails from './components/volunteer/VolunteerInvitationDetails';
 import NavbarOrganization from './components/organizations/NavbarOrganization';
+import VolunteerRequestsPage from './components/organizations/VolunteerRequestsPage';
+import VolunteerRequestDetailsPage from './components/organizations/VolunteerRequestDetailsPage';
 import { Box } from '@mui/material';
 
 // import VolunteerList from './components/volunteerTry/Volunteer1';
@@ -40,10 +42,12 @@ const App: React.FC = () => {
                             <Route path="volunteer-request" element={<VolunteerRequestForm />} />
                             <Route path="volunteer-invitation" element={<VolunteerInvitationDetails />} />
                         </Route>
-                        {/* <Route path="/volunteer-details" element={<ProtectedRouteVolunteer><VolunteerDetails /></ProtectedRouteVolunteer>} />
-                        <Route path="/volunteer-request" element={<ProtectedRouteVolunteer><VolunteerRequestForm /></ProtectedRouteVolunteer>} />
-                        <Route path="/volunteer-invitation" element={<ProtectedRouteVolunteer><VolunteerInvitationDetails /></ProtectedRouteVolunteer>} /> */}
-                        <Route path="/organization" element={<ProtectedRouteOrganization><NavbarOrganization /></ProtectedRouteOrganization>} />
+                        
+                        <Route path="/organization" element={<ProtectedRouteOrganization><Box sx={{ height: '100vh', width: '100%' }}><NavbarOrganization /><Outlet /></Box></ProtectedRouteOrganization>} >
+                            <Route path="volunteers-request" element={<VolunteerRequestsPage />} />
+                            <Route path="request/:requestId" element={<VolunteerRequestDetailsPage />} />
+                         </Route>
+
                         <Route path="/" element={<HomePage />} />
                         <Route path="/login" element={<AuthForms isLogin={true} />} />
                         <Route path="/signup" element={<AuthForms isLogin={false} />} />
@@ -51,9 +55,11 @@ const App: React.FC = () => {
                         <Route path="/signup_organization" element={<SignupO />} />
                     </Routes>
                 </PersistGate>
-            </Provider>
+            </Provider >
         </>
     );
 };
 
 export default App;
+
+

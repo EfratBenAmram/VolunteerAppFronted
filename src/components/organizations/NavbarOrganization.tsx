@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store/store';
 import { logoutOrganization } from "../../features/organizationSlice";
+import imagePath from '../../assets/images/image.jpg';
 import { getOrganizationWithImage } from '../../services/organizationService';
 
 const NavbarOrganization: React.FC = () => {
@@ -14,20 +15,22 @@ const NavbarOrganization: React.FC = () => {
 
     useEffect(() => {
         const fetchImage = async () => {
-            try {
-                if (!selectedOrganization?.organizationId) return; 
-                const response = await getOrganizationWithImage(selectedOrganization.organizationId);
-                console.log('Response data:', response);
-                if (response.image) {
-                    setImageSrc('data:image/jpeg;base64,' + response.image);
-                } else {
-                    console.error("תמונה לא נמצאה במידע שהתקבל");
+            if (!selectedOrganization?.organizationId) return;
+
+            if (selectedOrganization.imageOrg) {
+                try {
+                    const response = await getOrganizationWithImage(selectedOrganization.organizationId);
+                    console.log('Response data:', response);
+                    if (response.image) {
+                        setImageSrc('data:image/jpeg;base64,' + response.image);
+                    }
+                } catch (error) {
+                    console.error("שגיאה בשליפת התמונה:", error);
                 }
-            } catch (error) {
-                console.error("שגיאה בשליפת התמונה:", error);
+            } else {
+                setImageSrc(imagePath);
             }
         };
-
         fetchImage();
     }, [selectedOrganization?.organizationId]);
 
@@ -52,11 +55,14 @@ const NavbarOrganization: React.FC = () => {
                 <Toolbar>
                     <Container sx={{ display: 'flex', justifyContent: 'space-between' }}>
                         <div style={{ display: 'flex', gap: '20px' }}>
-                            <Button component={Link} to="" color="inherit">
+                            <Button component={Link} to="volunteers-request" color="inherit">
+                            organizations-request
                             </Button>
-                            <Button component={Link} to="" color="inherit">
+                            <Button component={Link} to="Organization-details" color="inherit">
+                                Organization-details
                             </Button>
-                            <Button component={Link} to="" color="inherit">
+                            <Button component={Link} to="Organization-request" color="inherit">
+                                Organization-request
                             </Button>
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>

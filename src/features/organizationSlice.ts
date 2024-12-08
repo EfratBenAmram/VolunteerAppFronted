@@ -7,9 +7,10 @@ import {
     deleteOrganization,
     signupOrganizationImage,
     loginOrganization,
+    signupOrganization,
 } from '../services/organizationService';
-import { Organization } from '../models/organizations';
-import { VolunteerLogin } from '../models/volunteers';
+import { Organization, OrganizationSignup } from '../models/organizations';
+import { UserLogin } from '../models/volunteers';
 
 interface OrganizationState {
     organizations: Organization[];
@@ -55,15 +56,13 @@ export const deleteExistingOrganization = createAsyncThunk('organizations/delete
 export const signupNewOrganization = createAsyncThunk(
     'organizations/signupNewOrganization',
     async (
-        { organizationData, image }: { organizationData: Organization; image?: File | undefined },
+        { organizationData, image }: { organizationData: OrganizationSignup; image?: File | undefined },
         thunkAPI
     ) => {
         try {
             const formData = new FormData();
             if (!image) {
-                const imageResponse = await fetch('../../assets/images/2');
-                const imageBlob = await imageResponse.blob();
-                image = new File([imageBlob], '1.jpg', { type: 'image/jpeg' });
+                return await signupOrganization(organizationData);
             }
             formData.append(
                 'organization',
@@ -91,7 +90,7 @@ export const setGoogleUser = createAsyncThunk('users/setGoogleUser', async (goog
 
 export const loginExistingOrganization = createAsyncThunk(
     'organizations/loginExistingOrganization',
-    async ({ email, password }: VolunteerLogin, thunkAPI) => {
+    async ({ email, password }: UserLogin, thunkAPI) => {
         try {
             const response = await loginOrganization({ email, password });
             return response;

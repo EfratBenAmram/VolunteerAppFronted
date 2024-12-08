@@ -1,12 +1,10 @@
 import { Organization } from "./organizations";
 
-export interface VolunteerLogin {
+export interface UserLogin {
   email: string;
   password: string;
 }
-
-export interface Volunteer {
-  volunteerId: number;
+export interface VolunteerSignup {
   name: string;
   email: string;
   password: string;
@@ -17,6 +15,19 @@ export interface Volunteer {
   experience: boolean;
   amountVolunteers: number;
   region: string;
+}
+export interface Volunteer {
+  volunteerId: number;
+  name: string;
+  email: string;
+  phone: string;
+  role: string;
+  gender: string;
+  birth: string;
+  experience: boolean;
+  amountVolunteers: number;
+  region: string;
+  imageVol: string | undefined;
   volunteerRequests: VolunteerRequests[];
   volunteerReview: VolunteerReview[];
 }

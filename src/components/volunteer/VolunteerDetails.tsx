@@ -1,9 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store/store';
-import {
-    Box,
-} from '@mui/material';
 // import GoogleMaps from './GoogleMaps';
 const VolunteerDetails: React.FC = () => {
     const selectedVolunteer = useSelector(

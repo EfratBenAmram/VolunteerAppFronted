@@ -45,3 +45,8 @@ export const getOrganizationWithImage = async (id: number): Promise<any> => {
     const response = await axios.get(`organization/getDto/${id}`);
     return response.data;
 };
+
+export const signupOrganization = async (formData: FormData): Promise<Organization> => {
+    const response = await axios.post('organization/signUp', formData);
+    return response.data;
+};

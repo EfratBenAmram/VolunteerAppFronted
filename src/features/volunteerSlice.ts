@@ -7,10 +7,13 @@ import {
     deleteVolunteer,
     signupVolunteerImage,
     loginVolunteer,
+    signupVolunteer,
 } from '../services/volunteerService';
-import { Volunteer, VolunteerLogin } from '../models/volunteers';
+import { Volunteer, UserLogin, VolunteerSignup } from '../models/volunteers';
 
 interface VolunteerState {
+    map(arg0: (volunteer: Volunteer) => import("react/jsx-runtime").JSX.Element): import("react").ReactNode;
+    flatMap(arg0: (vol: any) => any): unknown;
     volunteers: Volunteer[];
     selectedVolunteer: Volunteer | undefined;
     isConect: boolean;
@@ -49,19 +52,17 @@ export const deleteExistingVolunteer = createAsyncThunk('volunteers/deleteVolunt
     await deleteVolunteer(volunteerId);
     return volunteerId;
 });
+
 export const signupNewVolunteer = createAsyncThunk(
     'volunteers/signupNewVolunteer',
     async (
-        { volunteerData, image }: { volunteerData: Volunteer; image?: File | undefined },
+        { volunteerData, image }: { volunteerData: VolunteerSignup; image?: File | undefined },
         thunkAPI
     ) => {
         try {
             const formData = new FormData();
             if (!image) {
-                const defaultImagePath = volunteerData.gender === 'Female' ? '../../assets/images/1.jpg' : '../../assets/images/2.jpj';
-                const imageResponse = await fetch(defaultImagePath);
-                const imageBlob = await imageResponse.blob();
-                image = new File([imageBlob], volunteerData.gender === 'Female' ? '1.jpg' : '2.jpg', { type: 'image/jpeg' });
+                return await signupVolunteer(volunteerData);
             }
             formData.append(
                 'volunteer',
@@ -88,19 +89,24 @@ export const setGoogleUser = createAsyncThunk('users/setGoogleUser', async (goog
 
 export const loginExistingVolunteers = createAsyncThunk(
     'volunteers/loginExistingVolunteers',
-    async ({ email, password }: VolunteerLogin, thunkAPI) => {
-      try {
-        const response = await loginVolunteer({ email, password });
-        return response;
-      } catch (error) {
-        const err = error as { response?: { data?: { message?: string } } };
-        return thunkAPI.rejectWithValue({
-          errorMessage: err.response?.data?.message || 'An unexpected error occurred',
-        });
-      }
+    async ({ email, password }: UserLogin, thunkAPI) => {
+        try {
+            const response = await loginVolunteer({ email, password });
+            return response;
+        } catch (error) {
+            const err = error as { response?: { data?: { message?: string } } };
+            return thunkAPI.rejectWithValue({
+                errorMessage: err.response?.data?.message || 'An unexpected error occurred',
+            });
+        }
     }
-  );
-  
+);
+
+export const addVolunteerRequest = (newRequest: any) => ({
+    type: 'ADD_VOLUNTEER_REQUEST',
+    payload: newRequest
+});
+
 
 // Slice
 const volunteerSlice = createSlice({
