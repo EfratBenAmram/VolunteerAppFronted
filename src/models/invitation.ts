@@ -12,5 +12,5 @@ export interface VolunteerInvitation {
   activityDetails: string;
   requirements: string;
   volunteerType: VolunteerType;
-  InvitationStatus: string;
+  status: string;
 }

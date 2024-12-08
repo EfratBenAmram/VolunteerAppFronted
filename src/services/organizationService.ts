@@ -41,4 +41,7 @@ export const signupOrganizationImage = async (formData: FormData): Promise<Organ
     return response.data;
 };
 
-
+export const getOrganizationWithImage = async (id: number): Promise<any> => {
+    const response = await axios.get(`organization/getDto/${id}`);
+    return response.data;
+};

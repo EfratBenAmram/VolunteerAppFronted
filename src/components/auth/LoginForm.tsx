@@ -42,7 +42,7 @@ const LoginForm: React.FC = () => {
                 result = await dispatch(loginExistingVolunteers(loginData));
             } else { result = await dispatch(loginExistingOrganization(loginData)); }
             if (result.meta.requestStatus === 'fulfilled') {
-                navigate(role === 'volunteer' ? '/Volunteer-request' : '/organization-details');
+                navigate(role === 'volunteer' ? '/volunteer' : '/organization');
             } else {
                 console.error('Login failed:', result.payload?.errorMessage || 'Unknown error');
             }

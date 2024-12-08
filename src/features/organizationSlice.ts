@@ -113,6 +113,10 @@ const organizationSlice = createSlice({
             state.selectedOrganization = action.payload;
             state.isConect = false;
         },
+        logoutOrganization: (state) => {
+            state.selectedOrganization = undefined;
+            state.isConect = false;
+        },
     },
     extraReducers: (builder) => {
         // Fetch Organization
@@ -226,4 +230,4 @@ const organizationSlice = createSlice({
 });
 
 export default organizationSlice.reducer;
-export const { saveOrganizationData } = organizationSlice.actions;
+export const { saveOrganizationData, logoutOrganization } = organizationSlice.actions;

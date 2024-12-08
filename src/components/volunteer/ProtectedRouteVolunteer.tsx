@@ -7,10 +7,10 @@ interface ProtectedRouteProps {
     children: JSX.Element;
 }
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
+const ProtectedRouteVolunteer: React.FC<ProtectedRouteProps> = ({ children }) => {
     const { isConect } = useSelector((state: RootState) => state.volunteers);
 
     return isConect ? children : <Navigate to="/" />;
 };
 
-export default ProtectedRoute;
+export default ProtectedRouteVolunteer;

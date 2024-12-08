@@ -11,7 +11,7 @@ const validate = (value: string, regex: RegExp, errorMessage: string) =>
 
 const SignupForm: React.FC = () => {
     const [formData, setFormData] = useState({
-        username: '',
+        name: '',
         email: '',
         password: '',
         confirmPassword: '',
@@ -20,7 +20,7 @@ const SignupForm: React.FC = () => {
     });
 
     const [errors, setErrors] = useState({
-        username: '',
+        name: '',
         email: '',
         password: '',
         confirmPassword: '',
@@ -38,7 +38,7 @@ const SignupForm: React.FC = () => {
 
     const handleSubmit = (role: 'volunteer' | 'organization') => {
         const validationErrors = {
-            username: validate(formData.username, /^[a-zA-Z0-9_]{3,16}$/, 'Username must be 3-16 characters, alphanumeric or underscores only.'),
+            name: validate(formData.name, /^[a-zA-Z0-9_]{3,16}$/, 'Username must be 3-16 characters, alphanumeric or underscores only.'),
             email: validate(formData.email, /^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'Please enter a valid email address.'),
             password: validate(formData.password, /^(?=.*[a-zA-Z])(?=.*\d)[A-Za-z\d]{4,}$/, 'Password must be at least 4 characters, with letter and digit.'),
             confirmPassword: formData.password !== formData.confirmPassword ? 'Passwords do not match.' : '',
@@ -65,7 +65,7 @@ const SignupForm: React.FC = () => {
         <Box>
             <Typography variant="h4" sx={{ fontWeight: 'bold', color: 'd3d3d3', textAlign: 'center' }}>Sign Up</Typography>
             <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: 6, width: '100%' }}>
-                {['username', 'email', 'password', 'confirmPassword', 'phone'].map((field) => (
+                {['name', 'email', 'password', 'confirmPassword', 'phone'].map((field) => (
                     <TextField
                         key={field}
                         fullWidth

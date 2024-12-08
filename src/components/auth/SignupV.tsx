@@ -10,7 +10,7 @@ const SignupV: React.FC = () => {
     const [formData, setFormData] = useState({
         role: '', gender: '', birth: '', amountVolunteers: 0, region: '', image: null as File | null, experience: false
     });
-    const [errors, setErrors] = useState({ birth: '', amountVolunteers: '', region: '', image: '' });
+    const [errors, setErrors] = useState({ birth: '', amountVolunteers: '', image: '' });
     const [isLoading, setIsLoading] = useState(false);
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
@@ -18,13 +18,22 @@ const SignupV: React.FC = () => {
 
     const validate = () => {
         const age = new Date().getFullYear() - new Date(formData.birth).getFullYear();
-        const isValid = age >= 10 && age <= 80 && formData.amountVolunteers > 0 && ['NORTH', 'SOUTH', 'CENTER', 'JERUSALEM', 'GENERAL'].includes(formData.region) && (!formData.image || formData.image.type.split('/')[0] === 'image');
+        const birthDate = new Date(formData.birth);
+        const isValid =
+            age >= 10 &&
+            age <= 80 &&
+            formData.amountVolunteers > 0 &&
+            !isNaN(formData.amountVolunteers) &&
+            formData.amountVolunteers % 1 === 0 &&
+            (!formData.image || formData.image.type.split('/')[0] === 'image') &&
+            birthDate <= new Date();
+
         setErrors({
-            birth: age < 10 || age > 80 ? 'Age must be between 10 and 80.' : '',
-            amountVolunteers: formData.amountVolunteers <= 0 ? 'Amount of volunteers must be greater than 0.' : '',
-            region: !['NORTH', 'SOUTH', 'CENTER', 'JERUSALEM', 'GENERAL'].includes(formData.region) ? 'Invalid region.' : '',
+            birth: age < 10 || age > 80 || birthDate > new Date() ? 'Age must be between 10 and 80, and birth date must be in the past.' : '',
+            amountVolunteers: formData.amountVolunteers <= 0 || isNaN(formData.amountVolunteers) || formData.amountVolunteers % 1 !== 0 ? 'Amount of volunteers must be a positive integer greater than 0.' : '',
             image: formData.image && formData.image.type.split('/')[0] !== 'image' ? 'Only image files are allowed.' : ''
         });
+
         return isValid;
     };
 
@@ -32,7 +41,7 @@ const SignupV: React.FC = () => {
         if (validate()) {
             setIsLoading(true);
             try {
-                const volunteerData = { ...formData, name: selectedVolunteer?.username, email: selectedVolunteer?.email, password: selectedVolunteer?.password, phone: selectedVolunteer?.phone };
+                const volunteerData = { ...formData, name: selectedVolunteer?.name, email: selectedVolunteer?.email, password: selectedVolunteer?.password, phone: selectedVolunteer?.phone };
                 const result = await dispatch(signupNewVolunteer({ volunteerData, image: formData.image }));
                 if (result.meta.requestStatus === 'fulfilled') navigate('/volunteer');
             } catch (error) {
@@ -49,7 +58,7 @@ const SignupV: React.FC = () => {
 
     const fieldProps = [
         { label: 'Role', name: 'role', type: 'text', adornment: <Person /> },
-        { label: 'Date of Birth', name: 'birth', type: 'date', adornment: <DateRange /> },
+        { label: 'Date of Birth', name: 'birth', type: 'date', adornment: <DateRange />, min: new Date(new Date().setFullYear(new Date().getFullYear() - 80)).toISOString().split("T")[0], max: new Date(new Date().setFullYear(new Date().getFullYear() - 10)).toISOString().split("T")[0] },
         { label: 'Number of Volunteers', name: 'amountVolunteers', type: 'number', adornment: <Group /> }
     ];
 
@@ -59,7 +68,7 @@ const SignupV: React.FC = () => {
                 <CardContent>
                     <Typography variant="h4" sx={{ fontWeight: 'bold', textAlign: 'center', color: '#4CAF50', marginBottom: 4 }}>Volunteer Registration</Typography>
                     <form>
-                        {fieldProps.map(({ label, name, type, adornment }) => (
+                        {fieldProps.map(({ label, name, type, adornment, min, max }) => (
                             <TextField
                                 key={name}
                                 label={label}
@@ -73,6 +82,10 @@ const SignupV: React.FC = () => {
                                 InputProps={{ startAdornment: <InputAdornment position="start">{adornment}</InputAdornment> }}
                                 error={!!errors[name as keyof typeof errors]}
                                 helperText={errors[name as keyof typeof errors]}
+                                inputProps={{
+                                    min,
+                                    max
+                                }}                        
                             />
                         ))}
                         <FormControl fullWidth required sx={fieldStyle}>

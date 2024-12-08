@@ -10,19 +10,14 @@ import { VolunteerType } from '../models/volunteers';
 
 interface VolunteerTypeState {
     volunteerTypes: VolunteerType[];
-    selectedVolunteerType: VolunteerType;
+    selectedVolunteerType: VolunteerType| undefined ;
     loading: boolean;
     error: string | null;
 }
 
 const initialState: VolunteerTypeState = {
     volunteerTypes: [],
-    selectedVolunteerType: {  volunteerTypeId: 0,
-        name: "",
-        minAge: 0,
-        maxAge: 0,
-        topicVolume: 'ELDERLY_CARE',
-      },
+    selectedVolunteerType: undefined,
     loading: false,
     error: null,
 };

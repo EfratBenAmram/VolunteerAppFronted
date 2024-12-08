@@ -37,7 +37,7 @@ export interface VolunteerReview {
   reviewId: number;
   organization: Organization;
   volunteer: Volunteer;
-  comment: String;
+  comments: String;
   likes: number;
 }
 
@@ -46,5 +46,4 @@ export interface VolunteerType {
   name: string;
   minAge: number;
   maxAge: number;
-  topicVolume: string;
 }

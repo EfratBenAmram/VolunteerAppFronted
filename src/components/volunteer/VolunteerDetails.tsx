@@ -47,11 +47,6 @@ const VolunteerDetails: React.FC = () => {
       
     return (
         <>
-            <Box
-                sx={{
-                    height: '100vh',
-                }}
-            >
                 <style>
                     {`
                     .volunteer-details-container {
@@ -90,14 +85,14 @@ const VolunteerDetails: React.FC = () => {
                 <div className="volunteer-details-container">
                     {/* פרטי המתנדב */}
                     <h2>פרטי מתנדב</h2>
-                    <p><strong>שם:</strong> {name}</p>
-                    <p><strong>אימייל:</strong> {email}</p>
-                    <p><strong>טלפון:</strong> {phone}</p>
-                    <p><strong>תפקיד:</strong> {role}</p>
-                    <p><strong>מין:</strong> {gender}</p>
-                    <p><strong>תאריך לידה:</strong> {birth}</p>
-                    <p><strong>ניסיון:</strong> {experience ? 'כן' : 'לא'}</p>
-                    <p><strong>אזור:</strong> {region}</p>
+                    <p>שם: {name}</p>
+                    <p>אימייל: {email}</p>
+                    <p>טלפון: {phone}</p>
+                    <p>תפקיד: {role}</p>
+                    <p>מין: {gender}</p>
+                    <p>תאריך לידה: {birth}</p>
+                    <p>ניסיון: {experience ? 'כן' : 'לא'}</p>
+                    <p>אזור: {region}</p>
 
                     {/* בקשות התנדבות */}
                     <h2>בקשות התנדבות</h2>
@@ -105,13 +100,13 @@ const VolunteerDetails: React.FC = () => {
                         <ul>
                             {volunteerRequests.map((request, index) => (
                                 <li key={index}>
-                                    <strong>בקשה {index + 1}:</strong>
-                                    <p><strong>תיאור:</strong> {request.comments}</p>
-                                    <p><strong>מיקום:</strong> {request.positionX}</p>
-                                    <p><strong>מיקום:</strong> {request.positionY}</p>
-                                    <p><strong>זמן פנוי:</strong> {request.availableTime}</p>
-                                    <p><strong>תאריך:</strong> {new Date(request.localDate).toLocaleDateString()}</p>
-                                    <p><strong>סוגי התנדבות:</strong> {request.volunteerTypes?.map((type) => type.name).join(', ') || 'לא זמין'}</p>
+                                    <p>בקשה {index + 1}:</p>
+                                    <p>תיאור: {request.comments}</p>
+                                    <p>מיקום: {request.positionX}</p>
+                                    <p>מיקום: {request.positionY}</p>
+                                    <p>זמן פנוי: {request.availableTime}</p>
+                                    <p>תאריך: {new Date(request.localDate).toLocaleDateString()}</p>
+                                    <p>סוגי התנדבות: {request.volunteerTypes?.map((type) => type.name).join(', ') || 'לא זמין'}</p>
                                 </li>
                             ))}
                         </ul>
@@ -125,8 +120,8 @@ const VolunteerDetails: React.FC = () => {
                         <ul>
                             {volunteerReview.map((review) => (
                                 <li key={review.reviewId}>
-                                    <p><strong>ארגון:</strong> {review.organization.name}</p>
-                                    <p><strong>תגובה:</strong> {review.comment}</p>
+                                    <p>ארגון: {review.organization.name}</p>
+                                    <p>תגובה: {review.comment}</p>
                                     <div>{renderHearts(review.likes)}</div>
                                 </li>
                             ))}
@@ -135,7 +130,6 @@ const VolunteerDetails: React.FC = () => {
                         <p>אין תגובות</p>
                     )}
                 </div>
-            </Box>
             <div style={{ padding: '20px' }}>
       {/* <GoogleMaps 
         label="Enter a location" 

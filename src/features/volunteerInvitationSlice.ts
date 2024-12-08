@@ -5,24 +5,19 @@ import {
     createVolunteerInvitation,
     updateVolunteerInvitation,
     deleteVolunteerInvitation,
-} from '../services/volunteerTypeService';
-import { VolunteerInvitation } from '../models/volunteers';
+} from '../services/volunteerInvitationService';
+import { VolunteerInvitation } from '../models/invitation';
 
 interface VolunteerInvitationState {
     volunteerInvitation: VolunteerInvitation[];
-    selectedVolunteerInvitation: VolunteerInvitation;
+    selectedVolunteerInvitation: VolunteerInvitation | undefined;
     loading: boolean;
     error: string | null;
 }
 
 const initialState: VolunteerInvitationState = {
     volunteerInvitation: [],
-    selectedVolunteerInvitation: {  volunteerTypeId: 0,
-        name: "",
-        minAge: 0,
-        maxAge: 0,
-        topicVolume: 'ELDERLY_CARE',
-      },
+    selectedVolunteerInvitation: undefined,
     loading: false,
     error: null,
 };
@@ -107,7 +102,10 @@ const volunteerTypeSlice = createSlice({
         })
         builder.addCase(updateExistingVolunteerInvitation.fulfilled, (state, action) => {
             state.loading = false;
-            state.selectedVolunteerInvitation = action.payload;
+            const index = state.volunteerInvitation.findIndex((v) => v.invitationId === action.payload.invitationId);
+            if (index !== -1) {
+                state.volunteerInvitation[index] = action.payload;
+            }        
         })
         builder.addCase(updateExistingVolunteerInvitation.rejected, (state, action) => {
             state.loading = false;
@@ -122,7 +120,7 @@ const volunteerTypeSlice = createSlice({
         })
         builder.addCase(deleteExistingVolunteerInvitation.fulfilled, (state, action: PayloadAction<number>) => {
             state.loading = false;
-            state.volunteerInvitation = state.volunteerInvitation.filter((v) => v.volunteerTypeId !== action.payload);
+            state.volunteerInvitation = state.volunteerInvitation.filter((v) => v.invitationId !== action.payload);
         })
         builder.addCase(deleteExistingVolunteerInvitation.rejected, (state, action) => {
             state.loading = false;

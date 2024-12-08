@@ -42,4 +42,7 @@ export const signupVolunteerImage = async (formData: FormData): Promise<Voluntee
     return response.data;
 };
 
-
+export const getVolunteerWithImage = async (id: number): Promise<any> => {
+    const response = await axios.get(`volunteer/getDto/${id}`);
+    return response.data;
+};

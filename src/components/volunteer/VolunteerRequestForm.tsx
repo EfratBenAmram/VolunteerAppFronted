@@ -14,7 +14,7 @@ const VolunteerRequestForm: React.FC = () => {
     const [availableTime, setAvailableTime] = useState<string>('');
     const [comments, setComments] = useState<string>('');
     const [selectedDate, setSelectedDate] = useState<string>('');
-    const [errors, setErrors] = useState<Record<string, string>>({}); // Errors state
+    const [errors, setErrors] = useState<Record<string, string>>({});
 
     const calculateAge = (birthDate: string) => {
         const birthYear = new Date(birthDate).getFullYear();
@@ -81,7 +81,7 @@ const VolunteerRequestForm: React.FC = () => {
             volunteer: {
                 volunteerId: selectedVolunteer?.volunteerId || 0,
             },
-            comment: comments,
+            comments: comments,
             availableTime: availableTime,
             availableDate: selectedDate,
             localDate: new Date().toISOString().split('T')[0],
