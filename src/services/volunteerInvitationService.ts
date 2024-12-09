@@ -14,7 +14,7 @@ export const getVolunteerInvitationById = async (id: number): Promise<VolunteerI
 };
 
 export const createVolunteerInvitation = async (volunteerInvitation: VolunteerInvitation): Promise<VolunteerInvitation> => {
-    const response = await axios.post('volunteerInvitation/addVolunteerInvitations', volunteerInvitation);
+    const response = await axios.post('volunteerInvitation/addVolunteerInvitation', volunteerInvitation);
     return response.data;
 };
 

@@ -6,8 +6,8 @@ export interface VolunteerInvitation {
   volunteer: Volunteer;
   organization: Organization;
   invitationDate: Date;
-  responseTime: Date;
-  requestTime: Date;
+  responseTime: string | null;
+  requestTime: string;
   address: string;
   activityDetails: string;
   requirements: string;

@@ -109,7 +109,6 @@ const VolunteerRequestsPage: React.FC = () => {
       <h2>בקשות</h2>
 
       <div style={{ marginBottom: "20px", padding: "10px", border: "1px solid #ccc", borderRadius: "10px" }}>
-        {/* סינון לפי כמות, גיל, ניסיון, אזור, מגדר */}
         <label>
           כמות מתנדבים מינימלית:
           <input
@@ -173,7 +172,6 @@ const VolunteerRequestsPage: React.FC = () => {
             <option value="Female">נקבה</option>
           </select>
         </label>
-
         <label>
           סוג התנדבות:
           <select
@@ -225,7 +223,7 @@ const VolunteerRequestsPage: React.FC = () => {
           <div key={volunteer.volunteerId}>
             {Array.isArray(volunteer.volunteerRequests) && volunteer.volunteerRequests.map((request) => (
               <Link
-                to={`/request/${request.requestId}`}
+                to={`/organization/request/${request.requestId}`}
                 key={request.requestId}
                 style={{ textDecoration: "none", color: "inherit" }}
               >

@@ -15,8 +15,8 @@ import VolunteerRequestForm from './components/volunteer/VolunteerRequestForm';
 import VolunteerInvitationDetails from './components/volunteer/VolunteerInvitationDetails';
 import NavbarOrganization from './components/organizations/NavbarOrganization';
 import VolunteerRequestsPage from './components/organizations/VolunteerRequestsPage';
-import VolunteerRequestDetailsPage from './components/organizations/VolunteerRequestDetailsPage';
 import { Box } from '@mui/material';
+import RequestDetailsPage from './components/organizations/RequestDetailsPage';
 
 // import VolunteerList from './components/volunteerTry/Volunteer1';
 // import VolunteerForm from './components/volunteerTry/Volunteer2';
@@ -42,11 +42,11 @@ const App: React.FC = () => {
                             <Route path="volunteer-request" element={<VolunteerRequestForm />} />
                             <Route path="volunteer-invitation" element={<VolunteerInvitationDetails />} />
                         </Route>
-                        
+
                         <Route path="/organization" element={<ProtectedRouteOrganization><Box sx={{ height: '100vh', width: '100%' }}><NavbarOrganization /><Outlet /></Box></ProtectedRouteOrganization>} >
                             <Route path="volunteers-request" element={<VolunteerRequestsPage />} />
-                            <Route path="request/:requestId" element={<VolunteerRequestDetailsPage />} />
-                         </Route>
+                            <Route path="request/:requestId" element={<RequestDetailsPage />} />
+                        </Route>
 
                         <Route path="/" element={<HomePage />} />
                         <Route path="/login" element={<AuthForms isLogin={true} />} />

@@ -45,6 +45,10 @@ const VolunteerRequestForm: React.FC = () => {
         }
     }, [dispatch, selectedVolunteer]);
 
+    useEffect(() => {
+        dispatch(fetchVolunteerTypes());
+      }, [dispatch]);
+        
     const filteredTypes = volunteerTypes.filter(
         (type) => type.minAge <= volunteerAge && type.maxAge >= volunteerAge
     );
