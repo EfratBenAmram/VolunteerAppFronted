@@ -37,7 +37,7 @@ export interface VolunteerRequests {
   volunteer: Volunteer;
   comments: string;
   localDate: Date;
-  availableTime: Date;
+  availableTime: string;
   availableDate: Date;
   volunteerTypes?: VolunteerType[] | undefined;
   positionX: number;

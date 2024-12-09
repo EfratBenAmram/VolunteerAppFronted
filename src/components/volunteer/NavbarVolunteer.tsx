@@ -19,7 +19,6 @@ const NavbarVolunteer: React.FC = () => {
             if (selectedVolunteer.imageVol) {
                 try {
                     const response = await getVolunteerWithImage(selectedVolunteer.volunteerId);
-                    console.log('Response data:', response);
                     if (response.image) {
                         setImageSrc('data:image/jpeg;base64,' + response.image);
                     }

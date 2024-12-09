@@ -134,7 +134,7 @@ const VolunteerRequestForm: React.FC = () => {
                     value={selectedDate}
                     onChange={(e) => {
                         setSelectedDate(e.target.value);
-                        setErrors((prev) => ({ ...prev, selectedDate: '' })); // Clear error
+                        setErrors((prev) => ({ ...prev, selectedDate: '' }));
                     }}
                     min={minDate}
                     max={maxDate}

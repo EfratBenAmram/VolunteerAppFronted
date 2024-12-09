@@ -21,7 +21,6 @@ const VolunteerRequestCard: React.FC<VolunteerRequestCardProps> = ({
       if (volunteer.imageVol) {
         try {
           const response = await getVolunteerWithImage(volunteer.volunteerId);
-          console.log('Response data:', response);
           if (response.image) {
             setImageSrc('data:image/jpeg;base64,' + response.image);
           }

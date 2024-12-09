@@ -20,7 +20,6 @@ const NavbarOrganization: React.FC = () => {
             if (selectedOrganization.imageOrg) {
                 try {
                     const response = await getOrganizationWithImage(selectedOrganization.organizationId);
-                    console.log('Response data:', response);
                     if (response.image) {
                         setImageSrc('data:image/jpeg;base64,' + response.image);
                     }
