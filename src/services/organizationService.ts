@@ -50,3 +50,18 @@ export const signupOrganization = async (formData: FormData): Promise<Organizati
     const response = await axios.post('organization/signUp', formData);
     return response.data;
 };
+
+export const uploadFiles = async (files: File[]) => {
+    const formData = new FormData();
+    files.forEach((file) => {
+        formData.append('file', file);
+    });
+    
+    try {
+        const response = await axios.post('http://localhost:8080/api/uploadFiles', formData);
+        return response.data.filePaths;
+    } catch (error) {
+    console.error('File upload error:', error);
+    throw error;
+}
+};

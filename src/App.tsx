@@ -17,6 +17,7 @@ import NavbarOrganization from './components/organizations/NavbarOrganization';
 import VolunteerRequestsPage from './components/organizations/VolunteerRequestsPage';
 import { Box } from '@mui/material';
 import RequestDetailsPage from './components/organizations/RequestDetailsPage';
+import OrganizationInvitationDetails from './components/organizations/OrganizationInvitationDetails';
 
 // import VolunteerList from './components/volunteerTry/Volunteer1';
 // import VolunteerForm from './components/volunteerTry/Volunteer2';
@@ -46,6 +47,7 @@ const App: React.FC = () => {
                         <Route path="/organization" element={<ProtectedRouteOrganization><Box sx={{ height: '100vh', width: '100%' }}><NavbarOrganization /><Outlet /></Box></ProtectedRouteOrganization>} >
                             <Route path="volunteers-request" element={<VolunteerRequestsPage />} />
                             <Route path="request/:requestId" element={<RequestDetailsPage />} />
+                            <Route path="organization-invitation" element={<OrganizationInvitationDetails />} />
                         </Route>
 
                         <Route path="/" element={<HomePage />} />

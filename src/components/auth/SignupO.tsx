@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { signupNewOrganization } from '../../features/organizationSlice';
+import { signupNewOrganization } from '../../redux/organizationSlice';
 import { RootState, AppDispatch } from '../../store/store';
 import { useNavigate } from 'react-router-dom';
 import { TextField, Button, Box, Typography, CircularProgress, Grid, Card, CardContent, InputAdornment, FormControl, MenuItem, Select, InputLabel, FormHelperText } from '@mui/material';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { CloudUpload as CloudUploadIcon } from '@mui/icons-material';
 import { Helmet } from 'react-helmet';
+import axios from 'axios';
+import { uploadFiles } from '../../services/organizationService';
 
 const theme = createTheme({
     palette: { primary: { main: '#4CAF50' }, secondary: { main: '#FF4081' } },
@@ -20,17 +22,17 @@ const SignupO: React.FC = () => {
     const [formData, setFormData] = useState({
         orgGoals: '',
         referencePhones: ['', '', ''],
-        // recommendationLetters: [null, null, null],
-        image: null, 
+        recommendationLetters: [null, null, null],
         region: '',
+        image: '',
     });
-    
+
     const [errors, setErrors] = useState({
         orgGoals: '',
         referencePhones: ['', '', ''],
         recommendationLetters: ['', '', ''],
-        image: '',
         region: '',
+        image: '',
     });
     const [isLoading, setIsLoading] = useState(false);
 
@@ -75,13 +77,33 @@ const SignupO: React.FC = () => {
         if (!valid) return;
 
         setIsLoading(true);
+
+        const recommendationPdfPaths = await uploadFiles(formData.recommendationLetters.filter(file => file !== null) as File[]);
+
         try {
-            const organizationData = { ...formData, name: selectedOrganization?.name, email: selectedOrganization?.email, password: selectedOrganization?.password, phone: selectedOrganization?.phone };
+            const organizationData = {
+                name: selectedOrganization?.name,
+                email: selectedOrganization?.email,
+                password: selectedOrganization?.password,
+                phone: selectedOrganization?.phone,
+                orgGoals: formData.orgGoals,
+                region: formData.region,
+                imgOrg: formData.image.name,
+            };            
+    
+            const organizationMail = {
+                name: selectedOrganization?.name,
+                orgGoals: formData.orgGoals,
+                recommendationPhones: formData.referencePhones,
+                recommendationPdfPaths: recommendationPdfPaths,
+                region: formData.region,
+            }
             const result = await dispatch(signupNewOrganization({ organizationData, image: formData.image }));
+            await axios.post('http://localhost:8080/api/sendOrganizationDetails', organizationMail);
             if (result.meta.requestStatus === 'fulfilled') navigate('/organization');
         } catch (error) {
             console.error('Signup error:', error);
-        } finally {
+         } finally {
             setIsLoading(false);
         }
 
@@ -110,18 +132,18 @@ const SignupO: React.FC = () => {
                                     error={!!errors.orgGoals} helperText={errors.orgGoals}
                                     sx={fieldStyle}
                                 />
-                                 <FormControl fullWidth sx={fieldStyle}>
-                            <InputLabel>Region</InputLabel>
-                            <Select name="region" value={formData.region} onChange={(e) => handleInputChange('region', -1, e.target.value)} error={!!errors.region}>
-                                <MenuItem value="">Select Region</MenuItem>
-                                <MenuItem value="NORTH">North</MenuItem>
-                                <MenuItem value="SOUTH">South</MenuItem>
-                                <MenuItem value="CENTER">Center</MenuItem>
-                                <MenuItem value="JERUSALEM">Jerusalem</MenuItem>
-                                <MenuItem value="GENERAL">General</MenuItem>
-                            </Select>
-                            <FormHelperText>{errors.region}</FormHelperText>
-                        </FormControl>
+                                <FormControl fullWidth sx={fieldStyle}>
+                                    <InputLabel>Region</InputLabel>
+                                    <Select name="region" value={formData.region} onChange={(e) => handleInputChange('region', -1, e.target.value)} error={!!errors.region}>
+                                        <MenuItem value="">Select Region</MenuItem>
+                                        <MenuItem value="NORTH">North</MenuItem>
+                                        <MenuItem value="SOUTH">South</MenuItem>
+                                        <MenuItem value="CENTER">Center</MenuItem>
+                                        <MenuItem value="JERUSALEM">Jerusalem</MenuItem>
+                                        <MenuItem value="GENERAL">General</MenuItem>
+                                    </Select>
+                                    <FormHelperText>{errors.region}</FormHelperText>
+                                </FormControl>
                                 <Typography sx={{ width: '100%', textAlign: 'center', color: '#4CAF50', marginBottom: 2 }}>
                                     Please provide 3 reference phone numbers for your organization.
                                 </Typography>
@@ -146,7 +168,7 @@ const SignupO: React.FC = () => {
                                 <Typography sx={{ width: '100%', textAlign: 'center', color: '#4CAF50', marginBottom: 2 }}>
                                     Please upload 3 recommendation letters in PDF format.
                                 </Typography>
-                                {/* <Grid container spacing={2} sx={{ marginTop: 2 }}>
+                                <Grid container spacing={2} sx={{ marginTop: 2 }}>
                                     {formData.recommendationLetters.map((file, index) => (
                                         <Grid item xs={12} sm={6} key={index}>
                                             <label htmlFor={`file-upload-${index}`}>
@@ -170,7 +192,7 @@ const SignupO: React.FC = () => {
                                             )}
                                         </Grid>
                                     ))}
-                                </Grid> */}
+                                </Grid>
 
                                 <Typography sx={{ width: '100%', textAlign: 'center', color: '#4CAF50', marginBottom: 2 }}>
                                     Optionally upload your organization's image (JPEG/PNG).

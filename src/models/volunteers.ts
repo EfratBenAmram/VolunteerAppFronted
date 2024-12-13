@@ -1,7 +1,7 @@
 import { Organization } from "./organizations";
 
 export interface UserLogin {
-  email: string;
+  name: string;
   password: string;
 }
 export interface VolunteerSignup {
@@ -42,13 +42,14 @@ export interface VolunteerRequests {
   volunteerTypes?: VolunteerType[] | undefined;
   positionX: number;
   positionY: number;
+  invitationInd: false;
 }
 
 export interface VolunteerReview {
   reviewId: number;
   organization: Organization;
   volunteer: Volunteer;
-  comments: String;
+  comment: String;
   likes: number;
 }
 

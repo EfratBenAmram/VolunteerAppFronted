@@ -1,5 +1,5 @@
 import { Organization } from "./organizations";
-import { VolunteerType, Volunteer } from "./volunteers";
+import { VolunteerType, Volunteer, VolunteerRequests } from "./volunteers";
 
 export interface VolunteerInvitation {
   invitationId: number;
@@ -13,4 +13,6 @@ export interface VolunteerInvitation {
   requirements: string;
   volunteerType: VolunteerType;
   status: string;
+  reviewInd: boolean;
+  volunteerRequest: VolunteerRequests;
 }

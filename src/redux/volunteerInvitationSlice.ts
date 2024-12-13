@@ -13,6 +13,7 @@ interface VolunteerInvitationState {
     selectedVolunteerInvitation: VolunteerInvitation | undefined;
     loading: boolean;
     error: string | null;
+    status: 'idle' | 'loading' | 'succeeded' | 'failed';
 }
 
 const initialState: VolunteerInvitationState = {
@@ -20,6 +21,7 @@ const initialState: VolunteerInvitationState = {
     selectedVolunteerInvitation: undefined,
     loading: false,
     error: null,
+    status: 'idle', 
 };
 
 // Async Thunks
@@ -57,48 +59,58 @@ const volunteerTypeSlice = createSlice({
         builder.addCase(fetchVolunteerInvitations.pending, (state) => {
             state.loading = true;
             state.error = null;
+            state.status = 'loading';
         })
         builder.addCase(fetchVolunteerInvitations.fulfilled, (state, action: PayloadAction<VolunteerInvitation[]>) => {
             state.loading = false;
             state.volunteerInvitation = action.payload;
+            state.status = 'succeeded';
         })
         builder.addCase(fetchVolunteerInvitations.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message || 'Failed to fetch volunteers';
+            state.status = 'failed';
         })
 
         // Fetch VolunteerInvitation by ID
         builder.addCase(fetchVolunteerInvitationById.pending, (state) => {
             state.loading = true;
             state.error = null;
+            state.status = 'loading';
         })
         builder.addCase(fetchVolunteerInvitationById.fulfilled, (state, action: PayloadAction<VolunteerInvitation>) => {
             state.loading = false;
             state.selectedVolunteerInvitation = action.payload;
+            state.status = 'succeeded';
         })
         builder.addCase(fetchVolunteerInvitationById.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message || 'Failed to fetch volunteer';
+            state.status = 'failed';
         })
 
         // Create VolunteerInvitation
         builder.addCase(createNewVolunteerInvitation.pending, (state) => {
             state.loading = true;
             state.error = null;
+            state.status = 'loading';
         })
         builder.addCase(createNewVolunteerInvitation.fulfilled, (state, action: PayloadAction<VolunteerInvitation>) => {
             state.loading = false;
             state.volunteerInvitation.push(action.payload);
+            state.status = 'succeeded';
         })
         builder.addCase(createNewVolunteerInvitation.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message || 'Failed to create volunteer';
+            state.status = 'failed';
         })
 
         // Update VolunteerInvitation
         builder.addCase(updateExistingVolunteerInvitation.pending, (state) => {
             state.loading = true;
             state.error = null;
+            state.status = 'loading';
         })
         builder.addCase(updateExistingVolunteerInvitation.fulfilled, (state, action) => {
             state.loading = false;
@@ -106,10 +118,12 @@ const volunteerTypeSlice = createSlice({
             if (index !== -1) {
                 state.volunteerInvitation[index] = action.payload;
             }        
+            state.status = 'succeeded';
         })
         builder.addCase(updateExistingVolunteerInvitation.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message || 'Unknown error occurred';
+            state.status = 'failed';
         });
 
 
@@ -117,14 +131,17 @@ const volunteerTypeSlice = createSlice({
         builder.addCase(deleteExistingVolunteerInvitation.pending, (state) => {
             state.loading = true;
             state.error = null;
+            state.status = 'loading';
         })
         builder.addCase(deleteExistingVolunteerInvitation.fulfilled, (state, action: PayloadAction<number>) => {
             state.loading = false;
             state.volunteerInvitation = state.volunteerInvitation.filter((v) => v.invitationId !== action.payload);
+            state.status = 'succeeded';
         })
         builder.addCase(deleteExistingVolunteerInvitation.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message || 'Failed to delete volunteer';
+            state.status = 'failed';
         })
 
     },

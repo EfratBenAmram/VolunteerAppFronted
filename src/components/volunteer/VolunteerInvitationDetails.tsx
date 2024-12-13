@@ -1,25 +1,32 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../store/store';
-import { fetchVolunteerInvitations, updateExistingVolunteerInvitation } from '../../features/volunteerInvitationSlice';
+import { fetchVolunteerInvitations, updateExistingVolunteerInvitation } from '../../redux/volunteerInvitationSlice';
 import { VolunteerInvitation } from '../../models/invitation';
 import { AppDispatch } from '../../store/store';
 import { Button } from '@mui/material';
+import axios from 'axios';
 
 const VolunteerInvitationDetails: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
     const selectedVolunteer = useSelector((state: RootState) => state.volunteers.selectedVolunteer);
 
-    const { volunteerInvitation, loading, error } = useSelector(
+    const { volunteerInvitation, loading, error, status } = useSelector(
         (state: RootState) => state.volunteerInvitations
     );
 
     useEffect(() => {
-        dispatch(fetchVolunteerInvitations());
-    }, [dispatch]);
+        if (status === 'idle') {
+            dispatch(fetchVolunteerInvitations());
+        }
+    }, [dispatch, status]);
 
-    const handleStatusChange = (invitation: VolunteerInvitation, newStatus: string) => {
+    const handleStatusChange = async (invitation: VolunteerInvitation, newStatus: string) => {
         const { volunteerRequests, volunteerReview, ...cleanedVolunteer } = selectedVolunteer || {};
+        if (newStatus === 'REJECTED') {
+            const requestDetails = (await axios.get(`http://localhost:8080/api/volunteerRequest/volunteerRequestById/${invitation.volunteerRequest}`)).data;
+            await axios.put(`http://localhost:8080/api/volunteerRequest/updateVolunteerRequest/${invitation.volunteerRequest}`, { ...requestDetails, invitationInd: false, volunteer: { volunteerId: selectedVolunteer?.volunteerId } })
+        }
         dispatch(updateExistingVolunteerInvitation({
             id: invitation.invitationId,
             volunteerInvitation: {
@@ -83,63 +90,63 @@ const VolunteerInvitationDetails: React.FC = () => {
     };
 
     return (
-            <div className="invitation-details">
-                <h2>Volunteer Invitations</h2>
+        <div className="invitation-details">
+            <h2>Volunteer Invitations</h2>
 
-                {Object.entries(groupedInvitations).map(([status, invitations]) => (
-                    invitations.length > 0 && (
-                        <div key={status} className="status-group">
-                            <h3>
-                                {status === 'PENDING' && 'הזמינו אותך להתנדב'}
-                                {status === 'ACCEPTED' && 'התנדביות שמחכות רק לך'}
-                                {status === 'REJECTED' && 'התנדבויות שדחית☹️'}
-                                {status === 'COMPLETED' && 'התנדבויות שהתנדבת😊'}
-                            </h3>
-                            {invitations.map((invitation, index) => (
-                                <div key={`${status}-${index}`} className="invitation-card">
-                                    <p>Organization: {invitation.organization.name}</p>
-                                    <p>Date: {new Date(invitation.invitationDate).toLocaleDateString()}</p>
-                                    <p>Activity Details: {invitation.activityDetails}</p>
-                                    <p>Requirements: {invitation.requirements}</p>
-                                    <p>Address: {invitation.address}</p>
-                                    <p>Status: {invitation.status}</p>
+            {Object.entries(groupedInvitations).map(([status, invitations]) => (
+                invitations.length > 0 && (
+                    <div key={status} className="status-group">
+                        <h3>
+                            {status === 'PENDING' && 'הזמינו אותך להתנדב'}
+                            {status === 'ACCEPTED' && 'התנדביות שמחכות רק לך'}
+                            {status === 'REJECTED' && 'התנדבויות שדחית☹️'}
+                            {status === 'COMPLETED' && 'התנדבויות שהתנדבת😊'}
+                        </h3>
+                        {invitations.map((invitation, index) => (
+                            <div key={`${status}-${index}`} className="invitation-card">
+                                <p>Organization: {invitation.organization.name}</p>
+                                <p>Date: {new Date(invitation.invitationDate).toLocaleDateString()}</p>
+                                <p>Activity Details: {invitation.activityDetails}</p>
+                                <p>Requirements: {invitation.requirements}</p>
+                                <p>Address: {invitation.address}</p>
+                                <p>Status: {invitation.status}</p>
 
-                                    {/* כפתורים לפי הסטטוס */}
-                                    {status === 'PENDING' && (
-                                        <>
-                                            <Button
-                                                variant="contained"
-                                                color="success"
-                                                onClick={() => handleStatusChange(invitation, 'ACCEPTED')}
-                                            >
-                                                Accept
-                                            </Button>
-                                            <Button
-                                                variant="outlined"
-                                                color="error"
-                                                onClick={() => handleStatusChange(invitation, 'REJECTED')}
-                                            >
-                                                Reject
-                                            </Button>
-                                        </>
-                                    )}
-
-                                    {status === 'ACCEPTED' && (
+                                {/* כפתורים לפי הסטטוס */}
+                                {status === 'PENDING' && (
+                                    <>
                                         <Button
                                             variant="contained"
-                                            color="warning"
-                                            onClick={() => handleStatusChange(invitation, 'COMPLETED')}
+                                            color="success"
+                                            onClick={() => handleStatusChange(invitation, 'ACCEPTED')}
                                         >
-                                            Mark as Completed
+                                            Accept
                                         </Button>
-                                    )}
-                                </div>
-                            ))}
+                                        <Button
+                                            variant="outlined"
+                                            color="error"
+                                            onClick={() => handleStatusChange(invitation, 'REJECTED')}
+                                        >
+                                            Reject
+                                        </Button>
+                                    </>
+                                )}
 
-                        </div>
-                    )
-                ))}
-            </div>
+                                {status === 'ACCEPTED' && (
+                                    <Button
+                                        variant="contained"
+                                        color="warning"
+                                        onClick={() => handleStatusChange(invitation, 'COMPLETED')}
+                                    >
+                                        Mark as Completed
+                                    </Button>
+                                )}
+                            </div>
+                        ))}
+
+                    </div>
+                )
+            ))}
+        </div>
     );
 };
 

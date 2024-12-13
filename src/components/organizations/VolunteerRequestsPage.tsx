@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { fetchVolunteers } from "../../features/volunteerSlice";
+import { fetchVolunteers } from "../../redux/volunteerSlice";
 import { RootState } from "../../store/store";
 import VolunteerRequestCard from "./VolunteerRequestCard";
 import { AppDispatch } from "../../store/store";
 import { Volunteer, VolunteerType } from "../../models/volunteers";
-import { fetchVolunteerTypes } from "../../features/volunteerTypeSlice";
+import { fetchVolunteerTypes } from "../../redux/volunteerTypeSlice";
 
 const VolunteerRequestsPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const volunteers = useSelector((state: RootState) => state.volunteers.volunteers);
-  const volunteerTypes = useSelector((state: RootState) => state.volunteerTypes.volunteerTypes);
+  const { volunteers, status: volunteersStatus } = useSelector((state: RootState) => state.volunteers);
+  const { volunteerTypes, status: volunteerTypesStatus } = useSelector((state: RootState) => state.volunteerTypes);
 
   const [filteredVolunteers, setFilteredVolunteers] = useState<Volunteer[]>([]);
   const [filters, setFilters] = useState({
@@ -28,12 +28,16 @@ const VolunteerRequestsPage: React.FC = () => {
   });
 
   useEffect(() => {
-    dispatch(fetchVolunteers());
-  }, [dispatch]);
+    if (volunteerTypesStatus === 'idle') {
+      dispatch(fetchVolunteers());
+    }
+  }, [dispatch, volunteersStatus]);
 
   useEffect(() => {
+    if(volunteerTypesStatus === 'idle') {
     dispatch(fetchVolunteerTypes());
-  }, [dispatch]);
+    }
+  }, [dispatch, volunteerTypesStatus]);
 
   const calculateAge = (birth: string): number => {
     const birthDate = new Date(birth);
@@ -49,22 +53,26 @@ const VolunteerRequestsPage: React.FC = () => {
           const filteredRequests = volunteer.volunteerRequests.filter((request) => {
             const requestDate = new Date(request.availableDate);
             const requestDay = getDayOfWeek(requestDate);
-  
+
             const matchesDayOfWeek =
               filters.dayOfWeek === "" || filters.dayOfWeek === requestDay;
-  
+
             const hasVolunteerType =
               filters.volunteerTypeId === null ||
               request.volunteerTypes?.some((type) => type.volunteerTypeId === filters.volunteerTypeId);
-  
+
             const hasThisTime =
               filters.time === "" ||
               request.availableTime === filters.time ||
               request.availableTime === "ALL";
-  
-            return matchesDayOfWeek && hasVolunteerType && hasThisTime;
+
+            const invitationCheck = request.invitationInd === false;
+
+            const invitationCheckDate = new Date(request.availableDate) >= new Date();
+
+            return matchesDayOfWeek && hasVolunteerType && hasThisTime && invitationCheck && invitationCheckDate;
           });
-  
+
           return {
             ...volunteer,
             volunteerRequests: filteredRequests,
@@ -73,7 +81,7 @@ const VolunteerRequestsPage: React.FC = () => {
         .filter((volunteer) => volunteer.volunteerRequests.length > 0)
         .filter((volunteer) => {
           const age = calculateAge(volunteer.birth);
-  
+
           return (
             volunteer.amountVolunteers >= filters.minAmount &&
             volunteer.amountVolunteers <= filters.maxAmount &&
@@ -83,16 +91,15 @@ const VolunteerRequestsPage: React.FC = () => {
             (filters.region && volunteer.region === "ALL"
               ? true
               : filters.region
-              ? volunteer.region === filters.region
-              : true) &&
-            (filters.gender ? volunteer.gender === filters.gender : true)
+                ? volunteer.region === filters.region
+                : true) &&
+            (filters.gender ? volunteer.gender === filters.gender : true) 
           );
         });
-  
+
       setFilteredVolunteers(filtered);
     }
   }, [volunteers, filters]);
-  
 
   const handleFilterChange = (key: string, value: any) => {
     setFilters((prev) => ({ ...prev, [key]: value }));

@@ -2,13 +2,18 @@ export interface OrganizationSignup {
     name: string;
     email: string;
     phone: string;
+    password: string;
     orgGoals: string;
-    recommendationPhones: string;
     region: string;
 }
 
+export interface OrganizationMailSignup {
+    recommendationPhones: string[];
+    recommendationPdf: string[];
+}
+
 export interface OrganizationLogin {
-    email: string;
+    name: string;
     password: string;
 }
 
@@ -16,10 +21,8 @@ export interface Organization {
     organizationId: number;
     name: string;
     email: string;
-    password: string;
     phone: string;
     orgGoals: string;
-    recommendationPhones: string;
     region: string;
     imageOrg: string;
 }

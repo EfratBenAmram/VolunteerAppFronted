@@ -33,8 +33,13 @@ export const loginVolunteer = async (volunteer: UserLogin): Promise<Volunteer> =
 };
 
 export const signupVolunteer = async (formData: FormData): Promise<Volunteer> => {
-    const response = await axios.post('volunteer/signUp', formData);
-    return response.data;
+    try {
+        const response = await axios.post('volunteer/signUp', formData);
+        return response.data;
+    } catch (error) {
+        console.error('Signup Volunteer Error:', error);
+        throw error; 
+    }
 };
 
 

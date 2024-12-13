@@ -2,26 +2,26 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../../store/store';
-import { loginExistingOrganization } from '../../features/organizationSlice';
-import { loginExistingVolunteers } from '../../features/volunteerSlice';
+import { loginExistingOrganization } from '../../redux/organizationSlice';
+import { loginExistingVolunteers } from '../../redux/volunteerSlice';
 import { TextField, Button, Checkbox, FormControlLabel, Box, CircularProgress } from '@mui/material';
 
 const LoginForm: React.FC = () => {
-    const [formData, setFormData] = useState({ email: '', password: '', rememberMe: false });
-    const [errors, setErrors] = useState({ email: '', password: '' });
+    const [formData, setFormData] = useState({ name: '', password: '', rememberMe: false });
+    const [errors, setErrors] = useState({ name: '', password: '' });
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     const dispatch = useDispatch<AppDispatch>();
 
     const regex = {
-        email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+        name: /^[a-zA-Z0-9_]{3,}$/,
         password: /^(?=.*[a-zA-Z])(?=.*\d)[A-Za-z\d]{4,}$/
     };
 
-    const validate = (field: 'email' | 'password') => {
+    const validate = (field: 'name' | 'password') => {
         const isValid = regex[field].test(formData[field]);
         const errorMessages: { [key: string]: string } = {
-            email: 'Please enter a valid email address.',
+            name: 'Name must be at least 3 characters long and contain only letters, numbers, or underscores.',
             password: 'Password must include at least one letter, one number, and be at least 4 characters long.',
         };
         setErrors((prev) => ({ ...prev, [field]: isValid ? '' : errorMessages[field] }));
@@ -33,10 +33,10 @@ const LoginForm: React.FC = () => {
     };
 
     const handleSubmit = async (role: 'volunteer' | 'organization') => {
-        if (!validate('email') || !validate('password')) return;
+        if (!validate('name') || !validate('password')) return;
         setLoading(true);
         try {
-            const loginData = { email: formData.email, password: formData.password };
+            const loginData = { name: formData.name, password: formData.password };
             let result;
             if (role === 'volunteer') {
                 result = await dispatch(loginExistingVolunteers(loginData));
@@ -44,7 +44,8 @@ const LoginForm: React.FC = () => {
             if (result.meta.requestStatus === 'fulfilled') {
                 navigate(role === 'volunteer' ? '/volunteer' : '/organization');
             } else {
-                console.error('Login failed:', result.payload?.errorMessage || 'Unknown error');
+                alert('Login failed');
+                navigate('/signup');
             }
         } catch (error) {
             console.error('Login error:', error);
@@ -55,7 +56,7 @@ const LoginForm: React.FC = () => {
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: 6, width: '100%', }} >
-            {['email', 'password'].map((field) => (
+            {['name', 'password'].map((field) => (
                 <TextField
                     key={field}
                     fullWidth
@@ -64,7 +65,7 @@ const LoginForm: React.FC = () => {
                     variant="outlined"
                     value={formData[field]}
                     onChange={(e) => handleChange(field, e.target.value)}
-                    onBlur={() => validate(field as 'email' | 'password')}
+                    onBlur={() => validate(field as 'name' | 'password')}
                     error={!!errors[field]}
                     helperText={errors[field]}
                     sx={{ marginBottom: 2, '& .MuiInputLabel-root': { color: '#4e9af1' }, }}

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { signupNewVolunteer } from '../../features/volunteerSlice';
+import { signupNewVolunteer } from '../../redux/volunteerSlice';
 import { RootState, AppDispatch } from '../../store/store';
 import { useNavigate } from 'react-router-dom';
 import { TextField, Button, Checkbox, FormControl, InputLabel, Select, MenuItem, CircularProgress, Box, Typography, Card, CardContent, InputAdornment, FormHelperText } from '@mui/material';
@@ -40,13 +40,28 @@ const SignupV: React.FC = () => {
     const handleSubmit = async () => {
         if (validate()) {
             setIsLoading(true);
+
+            const volunteerData = {
+                ...formData,
+                name: selectedVolunteer?.name,
+                email: selectedVolunteer?.email,
+                password: selectedVolunteer?.password,
+                phone: selectedVolunteer?.phone
+            };
             try {
-                const volunteerData = { ...formData, name: selectedVolunteer?.name, email: selectedVolunteer?.email, password: selectedVolunteer?.password, phone: selectedVolunteer?.phone };
                 const result = await dispatch(signupNewVolunteer({ volunteerData, image: formData.image }));
-                if (result.meta.requestStatus === 'fulfilled') navigate('/volunteer');
+                if (result.meta.requestStatus === 'fulfilled') {
+                    navigate('/volunteer');
+                } else if (result.payload?.status === 409) {
+                    alert('This email already exists. enter with login');
+                    navigate('/login');
+                } else {
+                    console.error('Signup failed:', result);
+                }
             } catch (error) {
-                console.error('Signup error:', error);
-            } finally {
+                console.error('Signup Error in handleSubmit:', error);
+            }
+            finally {
                 setIsLoading(false);
             }
         }
@@ -85,7 +100,7 @@ const SignupV: React.FC = () => {
                                 inputProps={{
                                     min,
                                     max
-                                }}                        
+                                }}
                             />
                         ))}
                         <FormControl fullWidth required sx={fieldStyle}>
@@ -124,7 +139,6 @@ const SignupV: React.FC = () => {
                         <FormControl fullWidth sx={fieldStyle}>
                             <label><Checkbox checked={formData.experience} onChange={(e) => setFormData({ ...formData, experience: e.target.checked })} /> Previous volunteering experience</label>
                         </FormControl>
-
                         <Box sx={{ textAlign: 'center' }}>
                             <Button variant="contained" color="primary" fullWidth onClick={handleSubmit} disabled={isLoading} sx={buttonStyle}>
                                 {isLoading ? <CircularProgress size={24} color="secondary" /> : 'Register'}

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { createNewVolunteer, updateExistingVolunteer } from '../../features/volunteerSlice';
+import { createNewVolunteer, updateExistingVolunteer } from '../../redux/volunteerSlice';
 import { Volunteer } from "../../models/volunteers";
 
 const VolunteerForm: React.FC<{ existingVolunteer?: Volunteer }> = ({ existingVolunteer }) => {

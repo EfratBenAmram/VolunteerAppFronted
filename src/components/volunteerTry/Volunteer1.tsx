@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from "../../store/store";
-import { fetchVolunteers, deleteExistingVolunteer } from '../../features/volunteerSlice';
+import { fetchVolunteers, deleteExistingVolunteer } from '../../redux/volunteerSlice';
 
 const VolunteerList: React.FC = () => {
     const dispatch = useDispatch();

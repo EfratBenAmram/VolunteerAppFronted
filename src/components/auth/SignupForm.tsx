@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../../store/store';
-import { saveVolunteerData } from '../../features/volunteerSlice';
-import { saveOrganizationData } from '../../features/organizationSlice';
+import { saveVolunteerData } from '../../redux/volunteerSlice';
+import { saveOrganizationData } from '../../redux/organizationSlice';
 import { TextField, Button, Checkbox, FormControlLabel, Box, Typography, CircularProgress } from '@mui/material';
 
 const validate = (value: string, regex: RegExp, errorMessage: string) =>

@@ -3,7 +3,7 @@ import { AppBar, Toolbar, Button, Typography, Container, Box, Paper } from '@mui
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store/store';
-import { logoutVolunteer } from "../../features/volunteerSlice";
+import { logoutVolunteer } from "../../redux/volunteerSlice";
 import { getVolunteerWithImage } from '../../services/volunteerService';
 import imagePath from '../../assets/images/image.jpg';
 

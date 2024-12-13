@@ -7,7 +7,9 @@ import VolunteerInvitationForm from "./VolunteerInvitationForm";
 import { VolunteerInvitation } from "../../models/invitation";
 import { AppDispatch } from '../../store/store';
 import { useDispatch } from 'react-redux';
-import { createNewVolunteerInvitation } from "../../features/volunteerInvitationSlice";
+import { createNewVolunteerInvitation, fetchVolunteerInvitations } from "../../redux/volunteerInvitationSlice";
+import axios from "axios";
+import { fetchVolunteers } from "../../redux/volunteerSlice";
 
 const RequestDetailsPage: React.FC = () => {
   const { requestId } = useParams<{ requestId: string }>();
@@ -22,12 +24,19 @@ const RequestDetailsPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   const handleSubmit = async (invitation: Omit<VolunteerInvitation, "invitationId">) => {
-    try {
-      dispatch(createNewVolunteerInvitation(invitation))
-      handleClose();
-    } catch (error) {
-      console.error("Error sending invitation:", error);
-      alert("שגיאה בשליחת ההזמנה");
+    if (!requestDetails?.invitationInd) {
+      try {
+        dispatch(createNewVolunteerInvitation({...invitation, volunteerRequest: requestDetails}))
+        await axios.put(`http://localhost:8080/api/volunteerRequest/updateVolunteerRequest/${requestDetails?.requestId}`, { ...requestDetails, invitationInd: true, volunteer: {volunteerId: selectedVolunteer?.volunteerId} })
+        dispatch(fetchVolunteers());
+        dispatch(fetchVolunteerInvitations);
+        handleClose();
+      } catch (error) {
+        console.error("Error sending invitation:", error);
+        alert("שגיאה בשליחת ההזמנה");
+      }
+    } else {
+      alert("The request is already taken");
     }
   };
 
@@ -63,7 +72,7 @@ const RequestDetailsPage: React.FC = () => {
         selectedVolunteer.volunteerReview.map((review) => (
           <div key={review.reviewId} style={{ marginTop: "10px", padding: "10px", border: "1px solid #ddd", borderRadius: "5px" }}>
             <p><strong>ארגון:</strong> {review.organization.name}</p>
-            <p><strong>הערות:</strong> {review.comments}</p>
+            <p><strong>הערות:</strong> {review.comment}</p>
             <div>
               <strong>לייקים:</strong>{" "}
               {Array.from({ length: review.likes }).map((_, index) => (
@@ -84,7 +93,7 @@ const RequestDetailsPage: React.FC = () => {
           open={open}
           onClose={handleClose}
           onSubmit={handleSubmit}
-          volunteerId={selectedVolunteer?.volunteerId} 
+          volunteerId={selectedVolunteer?.volunteerId}
         />
       </div>
 

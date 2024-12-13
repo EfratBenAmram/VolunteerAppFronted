@@ -12,7 +12,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../store/store";
 import { VolunteerInvitation } from "../../models/invitation";
 import { VolunteerType } from "../../models/volunteers";
-import { fetchVolunteerTypes } from "../../features/volunteerTypeSlice";
+import { fetchVolunteerTypes } from "../../redux/volunteerTypeSlice";
 import { AppDispatch } from '../../store/store';
 import { useDispatch } from 'react-redux';
 
@@ -24,23 +24,9 @@ interface VolunteerInvitationFormProps {
 }
 
 const VolunteerInvitationForm: React.FC<VolunteerInvitationFormProps> = ({ open, onClose, onSubmit, volunteerId }) => {
-  const volunteerTypes = useSelector((state: RootState) => state.volunteerTypes.volunteerTypes);
+  const { volunteerTypes, status } = useSelector((state: RootState) => state.volunteerTypes);
   const orgId = useSelector((state: RootState) => state.organization.selectedOrganization?.organizationId);
   const dispatch = useDispatch<AppDispatch>();
-  const [minDate, setMinDate] = useState<string>('');
-  const [maxDate, setMaxDate] = useState<string>('');
-  useEffect(() => {
-    const today = new Date();
-    const weekLater = new Date(today);
-
-    weekLater.setDate(today.getDate() + 7);
-
-    const formatDate = (date: Date): string =>
-      date.toISOString().split('T')[0];
-
-    setMinDate(formatDate(today));
-    setMaxDate(formatDate(weekLater));
-  }, []);
 
   const [formData, setFormData] = useState({
     volunteer: "",
@@ -61,20 +47,23 @@ const VolunteerInvitationForm: React.FC<VolunteerInvitationFormProps> = ({ open,
       volunteer: { volunteerId: volunteerId },
       organization: { organizationId: orgId },
       invitationDate: formData.date,
-      // responseTime: "",
       requestTime: new Date(),
       address: formData.address,
       activityDetails: formData.activityDetails,
       requirements: formData.requirements,
       volunteerType: { volunteerTypeId: Number(formData.volunteerType) },
       status: "PENDING",
+      reviewInd: false,
+      volunteerRequest: { requestId: 0 }
     };
-
     onSubmit(newInvitation);
   };
+
   useEffect(() => {
-    dispatch(fetchVolunteerTypes());
-  }, [dispatch]);
+    if (status === 'idle') {
+      dispatch(fetchVolunteerTypes());
+    }
+  }, [dispatch, status]);
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
@@ -112,10 +101,6 @@ const VolunteerInvitationForm: React.FC<VolunteerInvitationFormProps> = ({ open,
             placeholder="התנדבות"
             name="date"
             value={formData.date}
-            // inputProps={{
-            //   min: minDate,
-            //   max: maxDate
-            // }}
             onChange={handleChange}
           />
 

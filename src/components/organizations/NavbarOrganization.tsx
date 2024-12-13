@@ -3,7 +3,7 @@ import { AppBar, Toolbar, Button, Typography, Container, Box, Paper } from '@mui
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store/store';
-import { logoutOrganization } from "../../features/organizationSlice";
+import { logoutOrganization } from "../../redux/organizationSlice";
 import imagePath from '../../assets/images/image.jpg';
 import { getOrganizationWithImage } from '../../services/organizationService';
 
@@ -55,10 +55,10 @@ const NavbarOrganization: React.FC = () => {
                     <Container sx={{ display: 'flex', justifyContent: 'space-between' }}>
                         <div style={{ display: 'flex', gap: '20px' }}>
                             <Button component={Link} to="volunteers-request" color="inherit">
-                            organizations-request
+                                organizations-request
                             </Button>
-                            <Button component={Link} to="Organization-details" color="inherit">
-                                Organization-details
+                            <Button component={Link} to="organization-invitation" color="inherit">
+                                organization-invitation
                             </Button>
                             <Button component={Link} to="Organization-request" color="inherit">
                                 Organization-request

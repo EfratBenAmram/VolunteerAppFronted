@@ -19,6 +19,7 @@ interface VolunteerState {
     isConect: boolean;
     loading: boolean;
     error: string | null;
+    status: 'idle' | 'loading' | 'succeeded' | 'failed';
 }
 
 const initialState: VolunteerState = {
@@ -27,6 +28,7 @@ const initialState: VolunteerState = {
     isConect: false,
     loading: false,
     error: null,
+    status: 'idle', 
 };
 
 // Async Thunks
@@ -69,29 +71,22 @@ export const signupNewVolunteer = createAsyncThunk(
                 new Blob([JSON.stringify(volunteerData)], { type: 'application/json' })
             );
             formData.append('image', image);
-
             const response = await signupVolunteerImage(formData);
             return response;
         } catch (error) {
-            const err = error as { response?: { data?: { message?: string } } };
+            const err = error as { status?: string };
             return thunkAPI.rejectWithValue({
-                errorMessage: err.response?.data?.message || 'An unexpected error occurred',
+                status: err.status,
             });
         }
     }
 );
 
-
-export const setGoogleUser = createAsyncThunk('users/setGoogleUser', async (googleUser: Volunteer) => {
-    console.log(googleUser);
-    return googleUser;
-});
-
 export const loginExistingVolunteers = createAsyncThunk(
     'volunteers/loginExistingVolunteers',
-    async ({ email, password }: UserLogin, thunkAPI) => {
+    async ({ name, password }: UserLogin, thunkAPI) => {
         try {
-            const response = await loginVolunteer({ email, password });
+            const response = await loginVolunteer({ name, password });
             return response;
         } catch (error) {
             const err = error as { response?: { data?: { message?: string } } };
@@ -107,7 +102,6 @@ export const addVolunteerRequest = (newRequest: any) => ({
     payload: newRequest
 });
 
-
 // Slice
 const volunteerSlice = createSlice({
     name: 'volunteers',
@@ -116,10 +110,16 @@ const volunteerSlice = createSlice({
         saveVolunteerData: (state, action: PayloadAction<Volunteer | undefined>) => {
             state.selectedVolunteer = action.payload;
             state.isConect = false;
+            state.status = 'loading';
         },
         logoutVolunteer: (state) => {
             state.selectedVolunteer = undefined;
             state.isConect = false;
+            state.status = 'succeeded';
+        },
+        setSelectedVolunteer: (state, action) => {
+            state.selectedVolunteer = action.payload;
+            state.status = 'failed';
         },
     },
     extraReducers: (builder) => {
@@ -127,56 +127,68 @@ const volunteerSlice = createSlice({
         builder.addCase(fetchVolunteers.pending, (state) => {
             state.loading = true;
             state.error = null;
+            state.status = 'loading';
         })
         builder.addCase(fetchVolunteers.fulfilled, (state, action: PayloadAction<Volunteer[]>) => {
             state.loading = false;
             state.volunteers = action.payload;
+            state.status = 'succeeded';
         })
         builder.addCase(fetchVolunteers.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message || 'Failed to fetch volunteers';
+            state.status = 'failed';
         })
 
         // Fetch Volunteer by ID
         builder.addCase(fetchVolunteerById.pending, (state) => {
             state.loading = true;
             state.error = null;
+            state.status = 'loading';
         })
         builder.addCase(fetchVolunteerById.fulfilled, (state, action: PayloadAction<Volunteer>) => {
             state.loading = false;
             state.selectedVolunteer = action.payload;
+            state.status = 'succeeded';
         })
         builder.addCase(fetchVolunteerById.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message || 'Failed to fetch volunteer';
+            state.status = 'failed';
         })
 
         // Create Volunteer
         builder.addCase(createNewVolunteer.pending, (state) => {
             state.loading = true;
             state.error = null;
+            state.status = 'loading';
         })
         builder.addCase(createNewVolunteer.fulfilled, (state, action: PayloadAction<Volunteer>) => {
             state.loading = false;
             state.volunteers.push(action.payload);
+            state.status = 'succeeded';
         })
         builder.addCase(createNewVolunteer.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message || 'Failed to create volunteer';
+            state.status = 'failed';
         })
 
         // Update Volunteer
         builder.addCase(updateExistingVolunteer.pending, (state) => {
             state.loading = true;
             state.error = null;
+            state.status = 'loading';
         })
         builder.addCase(updateExistingVolunteer.fulfilled, (state, action) => {
             state.loading = false;
             state.selectedVolunteer = action.payload;
+            state.status = 'succeeded';
         })
         builder.addCase(updateExistingVolunteer.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message || 'Unknown error occurred';
+            state.status = 'failed';
         });
 
 
@@ -184,30 +196,36 @@ const volunteerSlice = createSlice({
         builder.addCase(deleteExistingVolunteer.pending, (state) => {
             state.loading = true;
             state.error = null;
+            state.status = 'loading';
         })
         builder.addCase(deleteExistingVolunteer.fulfilled, (state, action: PayloadAction<number>) => {
             state.loading = false;
             state.volunteers = state.volunteers.filter((v) => v.volunteerId !== action.payload);
+            state.status = 'succeeded';
         })
         builder.addCase(deleteExistingVolunteer.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message || 'Failed to delete volunteer';
+            state.status = 'failed';
         })
 
         // Signup Volunteers
         builder.addCase(signupNewVolunteer.pending, (state) => {
             state.loading = true;
             state.error = null;
+            state.status = 'loading';
         })
         builder.addCase(signupNewVolunteer.fulfilled, (state, action) => {
             state.loading = false;
             state.volunteers.push(action.payload);
             state.selectedVolunteer = action.payload;
             state.isConect = true;
+            state.status = 'succeeded';
         })
         builder.addCase(signupNewVolunteer.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message || 'Unknown error occurred';
+            state.status = 'failed';
         });
 
 
@@ -215,19 +233,22 @@ const volunteerSlice = createSlice({
         builder.addCase(loginExistingVolunteers.pending, (state) => {
             state.loading = true;
             state.error = null;
+            state.status = 'loading';
         })
         builder.addCase(loginExistingVolunteers.fulfilled, (state, action) => {
             state.loading = false;
             state.selectedVolunteer = action.payload;
             state.isConect = true;
+            state.status = 'succeeded';
         })
         builder.addCase(loginExistingVolunteers.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message || 'Unknown error occurred';
+            state.status = 'failed';
         });
 
     },
 });
 
 export default volunteerSlice.reducer;
-export const { saveVolunteerData, logoutVolunteer } = volunteerSlice.actions;
+export const { saveVolunteerData, logoutVolunteer, setSelectedVolunteer } = volunteerSlice.actions;

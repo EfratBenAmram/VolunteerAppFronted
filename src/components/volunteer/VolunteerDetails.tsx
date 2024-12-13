@@ -24,8 +24,6 @@ const VolunteerDetails: React.FC = () => {
         volunteerReview,
     } = selectedVolunteer;
 
-
-
     const renderHearts = (likes: number) => {
         const hearts = [];
         for (let i = 0; i < 5; i++) {
@@ -101,6 +99,7 @@ const VolunteerDetails: React.FC = () => {
                                     <p>תיאור: {request.comments}</p>
                                     <p>מיקום: {request.positionX}</p>
                                     <p>מיקום: {request.positionY}</p>
+                                    <p>האם הוזמן: {request.invitationInd}</p>
                                     <p>זמן פנוי: {request.availableTime}</p>
                                     <p>תאריך: {new Date(request.localDate).toLocaleDateString()}</p>
                                     <p>סוגי התנדבות: {request.volunteerTypes?.map((type) => type.name).join(', ') || 'לא זמין'}</p>

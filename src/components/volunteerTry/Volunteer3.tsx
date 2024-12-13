@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchVolunteerById, updateExistingVolunteer } from '../../features/volunteerSlice';
+import { fetchVolunteerById, updateExistingVolunteer } from '../../redux/volunteerSlice';
 import { RootState } from "../../store/store";
 import { Volunteer } from "../../models/volunteers";
 
