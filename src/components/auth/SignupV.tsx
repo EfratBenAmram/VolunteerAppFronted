@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { signupNewVolunteer } from '../../redux/volunteerSlice';
 import { RootState, AppDispatch } from '../../store/store';
@@ -8,7 +8,7 @@ import { Person, DateRange, PhotoCamera, Group } from '@mui/icons-material';
 
 const SignupV: React.FC = () => {
     const [formData, setFormData] = useState({
-        role: '', gender: '', birth: '', amountVolunteers: 0, region: '', image: null as File | null, experience: false
+        role: '', gender: '', birth: '', amountVolunteers: 0, city: '', image: null as File | null, experience: false
     });
     const [errors, setErrors] = useState({ birth: '', amountVolunteers: '', image: '' });
     const [isLoading, setIsLoading] = useState(false);
@@ -77,6 +77,52 @@ const SignupV: React.FC = () => {
         { label: 'Number of Volunteers', name: 'amountVolunteers', type: 'number', adornment: <Group /> }
     ];
 
+    const handleAutocomplete = () => {
+        const input = document.getElementById('googleAutocomplete') as HTMLInputElement;
+    
+        if (input) {
+            const autocomplete = new window.google.maps.places.Autocomplete(input, {
+                types: ['(cities)'],
+                componentRestrictions: { country: 'il' },
+            });
+    
+            autocomplete.addListener('place_changed', () => {
+                const place = autocomplete.getPlace();
+    
+                if (place && place.address_components) {
+                    const cityComponent = place.address_components.find((component) =>
+                        component.types.includes('locality')
+                    );
+    
+                    if (cityComponent) {
+                        const selectedCity = cityComponent.long_name;
+                        setFormData((prev) => ({ ...prev, city: selectedCity }));
+                        console.log(`City selected: ${selectedCity}`);
+                    } else {
+                        alert('Please select a valid city in Israel.');
+                        setFormData((prev) => ({ ...prev, city: '' }));
+                    }
+                } else {
+                    alert('Could not determine the city. Please try again.');
+                    setFormData((prev) => ({ ...prev, city: '' }));
+                }
+            });
+        }
+    };
+    
+    useEffect(() => {
+        const loadGoogleMaps = async () => {
+            try {
+                await loadScript('https://maps.googleapis.com/maps/api/js?key=AIzaSyDm0YRkpIrMI0bHOmw76qF-YyjqtjhPLeA&libraries=places');
+                console.log("Google Maps script loaded successfully.");
+            } catch (error) {
+                console.error("Error loading Google Maps script:", error);
+            }
+        };
+    
+        loadGoogleMaps();
+    }, []); 
+    
     return (
         <Box sx={{ backgroundColor: '#e8f5e9', width: '100%', height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 5 }}>
             <Card sx={{ width: '100%', maxWidth: 600, borderRadius: 3, boxShadow: 10, padding: 3, backgroundColor: '#ffffff' }}>
@@ -112,18 +158,7 @@ const SignupV: React.FC = () => {
                             </Select>
                             <FormHelperText>{errors.gender}</FormHelperText>
                         </FormControl>
-                        <FormControl fullWidth sx={fieldStyle}>
-                            <InputLabel>Region</InputLabel>
-                            <Select name="region" value={formData.region} onChange={handleChange} error={!!errors.region}>
-                                <MenuItem value="">Select Region</MenuItem>
-                                <MenuItem value="NORTH">North</MenuItem>
-                                <MenuItem value="SOUTH">South</MenuItem>
-                                <MenuItem value="CENTER">Center</MenuItem>
-                                <MenuItem value="JERUSALEM">Jerusalem</MenuItem>
-                                <MenuItem value="GENERAL">General</MenuItem>
-                            </Select>
-                            <FormHelperText>{errors.region}</FormHelperText>
-                        </FormControl>
+                        <TextField fullWidth sx={fieldStyle} placeholder="Start typing the name..." id="googleAutocomplete" onInput={handleAutocomplete} />
                         <TextField
                             label="Profile Picture"
                             type="file"
@@ -155,3 +190,13 @@ const fieldStyle = { marginBottom: 3, backgroundColor: '#fff', borderRadius: 2 }
 const buttonStyle = { width: '100%', padding: '12px', borderRadius: 3, fontWeight: 'bold', boxShadow: 3, '&:hover': { backgroundColor: '#388E3C', boxShadow: 6 } };
 
 export default SignupV;
+function loadScript(src: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = src;
+        script.async = true;
+        script.onload = () => resolve();
+        script.onerror = () => reject(new Error(`Failed to load script: ${src}`));
+        document.body.appendChild(script);
+    });
+}

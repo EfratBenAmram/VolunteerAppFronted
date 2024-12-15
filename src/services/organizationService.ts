@@ -2,7 +2,7 @@ import axios from 'axios';
 import { Organization, OrganizationLogin } from "../models/organizations";
 
 axios.defaults.baseURL = 'http://localhost:8080/api/';
-
+  
 export const getOrganizations = async (): Promise<Organization[]> => {
     const response = await axios.get('organization/organization');
     return response.data;
@@ -56,12 +56,12 @@ export const uploadFiles = async (files: File[]) => {
     files.forEach((file) => {
         formData.append('file', file);
     });
-    
+
     try {
         const response = await axios.post('http://localhost:8080/api/uploadFiles', formData);
         return response.data.filePaths;
     } catch (error) {
-    console.error('File upload error:', error);
-    throw error;
-}
+        console.error('File upload error:', error);
+        throw error;
+    }
 };

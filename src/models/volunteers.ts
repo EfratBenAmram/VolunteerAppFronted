@@ -14,7 +14,7 @@ export interface VolunteerSignup {
   birth: string;
   experience: boolean;
   amountVolunteers: number;
-  region: string;
+  city: string;
 }
 export interface Volunteer {
   volunteerId: number;
@@ -26,7 +26,7 @@ export interface Volunteer {
   birth: string;
   experience: boolean;
   amountVolunteers: number;
-  region: string;
+  city: string;
   imageVol: string | undefined;
   volunteerRequests: VolunteerRequests[];
   volunteerReview: VolunteerReview[];

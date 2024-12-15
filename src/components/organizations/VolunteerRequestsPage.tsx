@@ -1,18 +1,21 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { fetchVolunteers } from "../../redux/volunteerSlice";
 import { RootState } from "../../store/store";
 import VolunteerRequestCard from "./VolunteerRequestCard";
 import { AppDispatch } from "../../store/store";
-import { Volunteer, VolunteerType } from "../../models/volunteers";
+import { Volunteer } from "../../models/volunteers";
 import { fetchVolunteerTypes } from "../../redux/volunteerTypeSlice";
+import { TextField } from "@mui/material";
 
 const VolunteerRequestsPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { volunteers, status: volunteersStatus } = useSelector((state: RootState) => state.volunteers);
   const { volunteerTypes, status: volunteerTypesStatus } = useSelector((state: RootState) => state.volunteerTypes);
-
+  const [city, setCity] = useState<string>('');
+  const inputRef = useRef<HTMLInputElement>(null);
+  const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
   const [filteredVolunteers, setFilteredVolunteers] = useState<Volunteer[]>([]);
   const [filters, setFilters] = useState({
     minAmount: 0,
@@ -20,7 +23,7 @@ const VolunteerRequestsPage: React.FC = () => {
     minAge: 0,
     maxAge: Infinity,
     experience: false,
-    region: "",
+    city: "",
     gender: "",
     time: "",
     volunteerTypeId: null as number | null,
@@ -34,8 +37,8 @@ const VolunteerRequestsPage: React.FC = () => {
   }, [dispatch, volunteersStatus]);
 
   useEffect(() => {
-    if(volunteerTypesStatus === 'idle') {
-    dispatch(fetchVolunteerTypes());
+    if (volunteerTypesStatus === 'idle') {
+      dispatch(fetchVolunteerTypes());
     }
   }, [dispatch, volunteerTypesStatus]);
 
@@ -88,12 +91,8 @@ const VolunteerRequestsPage: React.FC = () => {
             age >= filters.minAge &&
             age <= filters.maxAge &&
             (filters.experience ? volunteer.experience : true) &&
-            (filters.region && volunteer.region === "ALL"
-              ? true
-              : filters.region
-                ? volunteer.region === filters.region
-                : true) &&
-            (filters.gender ? volunteer.gender === filters.gender : true) 
+            (filters.city ? (volunteer.city?.toLowerCase() || "").includes(filters.city.toLowerCase()) : true) &&
+            (filters.gender ? volunteer.gender === filters.gender : true)
           );
         });
 
@@ -110,7 +109,43 @@ const VolunteerRequestsPage: React.FC = () => {
     return days[date.getDay()];
   };
 
+  useEffect(() => {
+    const loadGoogleMaps = async () => {
+      try {
+        await loadScript('https://maps.googleapis.com/maps/api/js?key=AIzaSyDm0YRkpIrMI0bHOmw76qF-YyjqtjhPLeA&libraries=places');
+        if (inputRef.current && window.google) {
+          autocompleteRef.current = new window.google.maps.places.Autocomplete(inputRef.current, {
+            types: ['(cities)'],
+            componentRestrictions: { country: 'IL' }
+          });
+          autocompleteRef.current?.addListener('place_changed', () => {
+            const place = autocompleteRef.current?.getPlace();
+            if (place?.address_components) {
+              const cityComponent = place.address_components.find((component) =>
+                component.types.includes('locality')
+              );
+              if (cityComponent) {
+                const selectedCity = cityComponent.long_name;
+                setCity(selectedCity);
+                console.log(`City selected: ${selectedCity}`);
+              }
+            }
+          });
+        }
+      } catch (err) {
+        console.error('Google Maps API loading error', err);
+      }
+    };
 
+    loadGoogleMaps();
+  }, []);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setCity(value);
+    handleFilterChange("city", value);
+  };
+  
   return (
     <div>
       <h2>בקשות</h2>
@@ -156,18 +191,13 @@ const VolunteerRequestsPage: React.FC = () => {
             onChange={(e) => handleFilterChange("experience", e.target.checked)}
           />
         </label>
-        <label>
-          אזור:
-          <select
-            value={filters.region}
-            onChange={(e) => handleFilterChange("region", e.target.value)}
-          >
-            <option value="">בחר אזור</option>
-            <option value="NORTH">צפון</option>
-            <option value="CENTER">מרכז</option>
-            <option value="SOUTH">דרום</option>
-          </select>
-        </label>
+        <TextField
+          inputRef={inputRef}
+          fullWidth
+          placeholder="Start typing city..."
+          value={city}
+          onChange={handleInputChange}
+        />
         <label>
           מגדר:
           <select
@@ -246,3 +276,13 @@ const VolunteerRequestsPage: React.FC = () => {
 };
 
 export default VolunteerRequestsPage;
+function loadScript(src: string): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = src;
+    script.async = true;
+    script.onload = () => resolve();
+    script.onerror = () => reject(new Error(`Failed to load script: ${src}`));
+    document.body.appendChild(script);
+  });
+}

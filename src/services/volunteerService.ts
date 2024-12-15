@@ -28,7 +28,7 @@ export const deleteVolunteer = async (volunteerId: number): Promise<void> => {
 };
 
 export const loginVolunteer = async (volunteer: UserLogin): Promise<Volunteer> => {
-    const response = await axios.post('volunteer/login', volunteer);
+    const response = await axios.post('http://localhost:8080/api/volunteer/login', volunteer);
     return response.data;
 };
 
