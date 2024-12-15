@@ -79,7 +79,9 @@ const SignupO: React.FC = () => {
         setIsLoading(true);
 
         const recommendationPdfPaths = await uploadFiles(formData.recommendationLetters.filter(file => file !== null) as File[]);
-
+        const axiosInstance = axios.create({
+            withCredentials: true,
+          });
         try {
             const organizationData = {
                 name: selectedOrganization?.name,
@@ -99,7 +101,7 @@ const SignupO: React.FC = () => {
                 region: formData.region,
             }
             const result = await dispatch(signupNewOrganization({ organizationData, image: formData.image }));
-            await axios.post('http://localhost:8080/api/sendOrganizationDetails', organizationMail);
+            await axiosInstance.post('http://localhost:8080/api/sendOrganizationDetails', organizationMail);
             if (result.meta.requestStatus === 'fulfilled') navigate('/organization');
         } catch (error) {
             console.error('Signup error:', error);

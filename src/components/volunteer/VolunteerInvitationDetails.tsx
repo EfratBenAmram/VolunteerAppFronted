@@ -39,14 +39,16 @@ const VolunteerInvitationDetails: React.FC = () => {
 
     const handleStatusChange = async (invitation: VolunteerInvitation, newStatus: string) => {
         const { volunteerRequests, volunteerReview, ...cleanedVolunteer } = selectedVolunteer || {};
-    
+        const axiosInstance = axios.create({
+            withCredentials: true,
+          });
         if (newStatus === 'ACCEPTED') {
             try {
                 // מקבל את פרטי הבקשה
-                const requestDetails = (await axios.get(`http://localhost:8080/api/volunteerRequest/volunteerRequestById/${invitation.volunteerRequest}`)).data;
+                const requestDetails = (await axiosInstance.get(`http://localhost:8080/api/volunteerRequest/volunteerRequestById/${invitation.volunteerRequest}`)).data;
     
                 // מעדכן את ה-API של בקשה זו
-                await axios.put(`http://localhost:8080/api/volunteerRequest/updateVolunteerRequest/${invitation.volunteerRequest}`, {
+                await axiosInstance.put(`http://localhost:8080/api/volunteerRequest/updateVolunteerRequest/${invitation.volunteerRequest}`, {
                     ...requestDetails,
                     invitationInd: true,
                     volunteer: { volunteerId: selectedVolunteer?.volunteerId }

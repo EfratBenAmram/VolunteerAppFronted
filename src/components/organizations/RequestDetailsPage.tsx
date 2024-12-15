@@ -8,7 +8,6 @@ import { VolunteerInvitation } from "../../models/invitation";
 import { AppDispatch } from '../../store/store';
 import { useDispatch } from 'react-redux';
 import { createNewVolunteerInvitation, fetchVolunteerInvitations } from "../../redux/volunteerInvitationSlice";
-import axios from "axios";
 import { fetchVolunteers } from "../../redux/volunteerSlice";
 
 const RequestDetailsPage: React.FC = () => {

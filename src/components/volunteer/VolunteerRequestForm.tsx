@@ -99,9 +99,11 @@ const VolunteerRequestForm: React.FC = () => {
             alert('אירעה שגיאה. נסה שוב מאוחר יותר.');
         }
     };
-
+    const axiosInstance = axios.create({
+        withCredentials: true,
+      });
     const createVolunteerType = async (volunteerRequest: VolunteerRequests): Promise<VolunteerRequests> => {
-        const response = await axios.post('volunteerRequest/addVolunteerRequest', volunteerRequest);
+        const response = await axiosInstance.post('volunteerRequest/addVolunteerRequest', volunteerRequest);
         return response.data;
     };
     return (

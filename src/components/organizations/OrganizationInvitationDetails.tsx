@@ -9,6 +9,9 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import axios from 'axios';
 
 const OrganizationInvitationDetails: React.FC = () => {
+    const axiosInstance = axios.create({
+        withCredentials: true,
+      });
     const dispatch = useDispatch<AppDispatch>();
     const selectedOrganization = useSelector(
         (state: RootState) => state.organization.selectedOrganization
@@ -54,7 +57,7 @@ const OrganizationInvitationDetails: React.FC = () => {
 
     const fetchVolunteerDetails = async (volunteerId: number) => {
         try {
-            const response = await axios.get(`http://localhost:8080/api/volunteer/volunteerById/${volunteerId}`);
+            const response = await axiosInstance.get(`http://localhost:8080/api/volunteer/volunteerById/${volunteerId}`);
             return response.data;
         } catch (error) {
             console.error("Error fetching volunteer details:", error);
@@ -87,8 +90,8 @@ const OrganizationInvitationDetails: React.FC = () => {
                 likes: hearts,
             };
             try {
-                await axios.post('http://localhost:8080/api/volunteerReview/addVolunteerReview', payload);
-                await axios.put(`http://localhost:8080/api/volunteerInvitation/updateVolunteerInvitation/${currentInvitation.invitationId}`, {...currentInvitation, reviewInd: true, volunteer: currentInvitation.volunteer})
+                await axiosInstance.post('http://localhost:8080/api/volunteerReview/addVolunteerReview', payload);
+                await axiosInstance.put(`http://localhost:8080/api/volunteerInvitation/updateVolunteerInvitation/${currentInvitation.invitationId}`, {...currentInvitation, reviewInd: true, volunteer: currentInvitation.volunteer})
             } catch (error) {
                 console.error('Error submitting review:', error);
             }

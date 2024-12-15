@@ -13,8 +13,9 @@ import { RootState } from "../../store/store";
 import { VolunteerInvitation } from "../../models/invitation";
 import { VolunteerType } from "../../models/volunteers";
 import { fetchVolunteerTypes } from "../../redux/volunteerTypeSlice";
-import { AppDispatch } from '../../store/store';
-import { useDispatch } from 'react-redux';
+import { AppDispatch } from "../../store/store";
+import { useDispatch } from "react-redux";
+import { LoadScript, Autocomplete } from "@react-google-maps/api";
 
 interface VolunteerInvitationFormProps {
   open: boolean;
@@ -23,9 +24,21 @@ interface VolunteerInvitationFormProps {
   volunteerId: number;
 }
 
-const VolunteerInvitationForm: React.FC<VolunteerInvitationFormProps> = ({ open, onClose, onSubmit, volunteerId }) => {
-  const { volunteerTypes, status } = useSelector((state: RootState) => state.volunteerTypes);
-  const orgId = useSelector((state: RootState) => state.organization.selectedOrganization?.organizationId);
+const GOOGLE_API_KEY = "AIzaSyDm0YRkpIrMI0bHOmw76qF-YyjqtjhPLeA";
+const libraries = ["places"];
+
+const VolunteerInvitationForm: React.FC<VolunteerInvitationFormProps> = ({
+  open,
+  onClose,
+  onSubmit,
+  volunteerId,
+}) => {
+  const { volunteerTypes, status } = useSelector(
+    (state: RootState) => state.volunteerTypes
+  );
+  const orgId = useSelector(
+    (state: RootState) => state.organization.selectedOrganization?.organizationId
+  );
   const dispatch = useDispatch<AppDispatch>();
 
   const [formData, setFormData] = useState({
@@ -36,11 +49,26 @@ const VolunteerInvitationForm: React.FC<VolunteerInvitationFormProps> = ({ open,
     volunteerType: "",
     date: "",
   });
+  const [autocomplete, setAutocomplete] =
+    useState<google.maps.places.Autocomplete | null>(null);
+
   const handleChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setFormData({ ...formData, [event.target.name]: event.target.value });
   };
+
+  const handlePlaceChanged = () => {
+    if (autocomplete) {
+      const place = autocomplete.getPlace();
+      console.log(place);
+      setFormData({
+        ...formData,
+        address: place.formatted_address || "",
+      });
+    }
+  };
+  
   const handleSubmit = () => {
     const newInvitation: Omit<VolunteerInvitation, "invitationId"> = {
       invitationId: 0,
@@ -54,30 +82,35 @@ const VolunteerInvitationForm: React.FC<VolunteerInvitationFormProps> = ({ open,
       volunteerType: { volunteerTypeId: Number(formData.volunteerType) },
       status: "PENDING",
       reviewInd: false,
-      volunteerRequest: { requestId: 0 }
+      volunteerRequest: { requestId: 0 },
     };
     onSubmit(newInvitation);
   };
 
   useEffect(() => {
-    if (status === 'idle') {
+    if (status === "idle") {
       dispatch(fetchVolunteerTypes());
     }
   }, [dispatch, status]);
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
-      <DialogTitle>הזמן מתנדב</DialogTitle>
-      <DialogContent>
+    <LoadScript googleMapsApiKey={GOOGLE_API_KEY} libraries={libraries}>
+      <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+        <DialogTitle>הזמן מתנדב</DialogTitle>
         <DialogContent>
-          <TextField
-            fullWidth
-            label="כתובת"
-            name="address"
-            value={formData.address}
-            onChange={handleChange}
-            margin="normal"
-          />
+          <Autocomplete
+            onLoad={(autocompleteInstance) => setAutocomplete(autocompleteInstance)}
+            onPlaceChanged={handlePlaceChanged}
+          >
+            <TextField
+              fullWidth
+              label="כתובת"
+              name="address"
+              value={formData.address}
+              onChange={handleChange}
+              margin="normal"
+            />
+          </Autocomplete>
           <TextField
             fullWidth
             label="פרטי פעילות"
@@ -103,7 +136,6 @@ const VolunteerInvitationForm: React.FC<VolunteerInvitationFormProps> = ({ open,
             value={formData.date}
             onChange={handleChange}
           />
-
           <TextField
             select
             fullWidth
@@ -126,8 +158,9 @@ const VolunteerInvitationForm: React.FC<VolunteerInvitationFormProps> = ({ open,
             הזמן
           </Button>
         </DialogActions>
-      </DialogContent>
-    </Dialog>
+      </Dialog>
+    </LoadScript>
   );
 };
-export default VolunteerInvitationForm
+
+export default VolunteerInvitationForm;
