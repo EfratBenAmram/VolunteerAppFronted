@@ -21,12 +21,61 @@ const VolunteerInvitationDetails: React.FC = () => {
         }
     }, [dispatch, status]);
 
+    // const handleStatusChange = async (invitation: VolunteerInvitation, newStatus: string) => {
+    //     const { volunteerRequests, volunteerReview, ...cleanedVolunteer } = selectedVolunteer || {};
+    //     if (newStatus === 'REJECTED') {
+    //         const requestDetails = (await axios.get(`http://localhost:8080/api/volunteerRequest/volunteerRequestById/${invitation.volunteerRequest}`)).data;
+    //         await axios.put(`http://localhost:8080/api/volunteerRequest/updateVolunteerRequest/${invitation.volunteerRequest}`, { ...requestDetails, invitationInd: false, volunteer: { volunteerId: selectedVolunteer?.volunteerId } })
+    //     }
+    //     dispatch(updateExistingVolunteerInvitation({
+    //         id: invitation.invitationId,
+    //         volunteerInvitation: {
+    //             ...invitation,
+    //             status: newStatus,
+    //             volunteer: cleanedVolunteer,
+    //         },
+    //     }));
+    // };
+
     const handleStatusChange = async (invitation: VolunteerInvitation, newStatus: string) => {
         const { volunteerRequests, volunteerReview, ...cleanedVolunteer } = selectedVolunteer || {};
-        if (newStatus === 'REJECTED') {
-            const requestDetails = (await axios.get(`http://localhost:8080/api/volunteerRequest/volunteerRequestById/${invitation.volunteerRequest}`)).data;
-            await axios.put(`http://localhost:8080/api/volunteerRequest/updateVolunteerRequest/${invitation.volunteerRequest}`, { ...requestDetails, invitationInd: false, volunteer: { volunteerId: selectedVolunteer?.volunteerId } })
+    
+        if (newStatus === 'ACCEPTED') {
+            try {
+                // מקבל את פרטי הבקשה
+                const requestDetails = (await axios.get(`http://localhost:8080/api/volunteerRequest/volunteerRequestById/${invitation.volunteerRequest}`)).data;
+    
+                // מעדכן את ה-API של בקשה זו
+                await axios.put(`http://localhost:8080/api/volunteerRequest/updateVolunteerRequest/${invitation.volunteerRequest}`, {
+                    ...requestDetails,
+                    invitationInd: true,
+                    volunteer: { volunteerId: selectedVolunteer?.volunteerId }
+                });
+    
+                // מוצא הזמנות נוספות עם אותו volunteerRequest ומשנה את הסטטוס שלהן ל-REJECTED
+                const otherInvitations = volunteerInvitation.filter(
+                    (inv) =>
+                        inv.volunteerRequest === invitation.volunteerRequest &&
+                        inv.invitationId !== invitation.invitationId
+                );
+    
+                for (const otherInvitation of otherInvitations) {
+                    dispatch(updateExistingVolunteerInvitation({
+                        id: otherInvitation.invitationId,
+                        volunteerInvitation: {
+                            ...otherInvitation,
+                            status: 'REJECTED',
+                            volunteer: cleanedVolunteer,
+                        },
+                    }));
+                }
+    
+            } catch (error) {
+                console.error("Failed to handle ACCEPTED status change:", error);
+            }
         }
+    
+        // מעדכן את Redux עם הסטטוס החדש
         dispatch(updateExistingVolunteerInvitation({
             id: invitation.invitationId,
             volunteerInvitation: {
@@ -36,6 +85,7 @@ const VolunteerInvitationDetails: React.FC = () => {
             },
         }));
     };
+    
 
     useEffect(() => {
         const today = new Date();

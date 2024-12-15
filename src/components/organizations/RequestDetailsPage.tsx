@@ -27,9 +27,9 @@ const RequestDetailsPage: React.FC = () => {
     if (!requestDetails?.invitationInd) {
       try {
         dispatch(createNewVolunteerInvitation({...invitation, volunteerRequest: requestDetails}))
-        await axios.put(`http://localhost:8080/api/volunteerRequest/updateVolunteerRequest/${requestDetails?.requestId}`, { ...requestDetails, invitationInd: true, volunteer: {volunteerId: selectedVolunteer?.volunteerId} })
+        //await axios.put(`http://localhost:8080/api/volunteerRequest/updateVolunteerRequest/${requestDetails?.requestId}`, { ...requestDetails, invitationInd: true, volunteer: {volunteerId: selectedVolunteer?.volunteerId} })
         dispatch(fetchVolunteers());
-        dispatch(fetchVolunteerInvitations);
+        dispatch(fetchVolunteerInvitations());
         handleClose();
       } catch (error) {
         console.error("Error sending invitation:", error);
