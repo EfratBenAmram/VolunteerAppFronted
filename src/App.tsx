@@ -8,60 +8,70 @@ import AuthForms from './components/auth/AuthForms';
 import SignupV from './components/auth/SignupV';
 import SignupO from './components/auth/SignupO';
 import VolunteerDetails from './components/volunteer/VolunteerDetails';
-import ProtectedRouteVolunteer from './components/volunteer/ProtectedRouteVolunteer';
-import ProtectedRouteOrganization from './components/organizations/ProrectedRouteOrganizatio';
-import NavbarVolunteer from './components/volunteer/NavbarVolunteer';
 import VolunteerRequestForm from './components/volunteer/VolunteerRequestForm';
 import VolunteerInvitationDetails from './components/volunteer/VolunteerInvitationDetails';
-import NavbarOrganization from './components/organizations/NavbarOrganization';
 import VolunteerRequestsPage from './components/organizations/VolunteerRequestsPage';
 import { Box } from '@mui/material';
+import OrganizationInvitationDetails from './components/organizations/Invitation/OrganizationInvitationDetails';
+import NavbarUser from './components/NavbarUser';
+import ProtectedRoute from './components/ProtectedRouteProps';
 import RequestDetailsPage from './components/organizations/RequestDetailsPage';
-import OrganizationInvitationDetails from './components/organizations/OrganizationInvitationDetails';
-
-// import VolunteerList from './components/volunteerTry/Volunteer1';
-// import VolunteerForm from './components/volunteerTry/Volunteer2';
-// import VolunteerDetails from './components/volunteerTry/Volunteer3';
-// import LoginSignupPopup from './components/volunteer/LoginSignupPopup';
+import ThankYou from './components/volunteer/ThankYou';
+import AboutPage from './components/AboutPage';
+import CheckOrganization from './components/auth/CheckOrganization';
 
 const App: React.FC = () => {
     return (
         <>
             <Provider store={store}>
                 <PersistGate loading={<div>Loading...</div>} persistor={persistor}>
-
-                    {/* <LoginSignupPopup />
-            <h1>Volunteer Matching Platform</h1>
-            <VolunteerList />
-            <VolunteerForm />
-            <VolunteerDetails /> 
-            <HostagesTicker/>*/}
-
                     <Routes>
-                        <Route path="/volunteer" element={<ProtectedRouteVolunteer><Box sx={{ height: '100vh', width: '100%' }}><NavbarVolunteer /><Outlet /></Box></ProtectedRouteVolunteer>} >
+                        <Route
+                            path="/volunteer"
+                            element={
+                                <ProtectedRoute userType="volunteer">
+                                    <Box sx={{ paddingTop: '90px', height: '100vh', width: '100%' }}>
+                                        <NavbarUser userType="volunteer" />
+                                        <Outlet />
+                                    </Box>
+                                </ProtectedRoute>
+                            }
+                        >
+                            <Route path="about" element={<AboutPage />} />
                             <Route path="volunteer-details" element={<VolunteerDetails />} />
                             <Route path="volunteer-request" element={<VolunteerRequestForm />} />
                             <Route path="volunteer-invitation" element={<VolunteerInvitationDetails />} />
+                            <Route path="finish-request" element={<ThankYou />} />
                         </Route>
 
-                        <Route path="/organization" element={<ProtectedRouteOrganization><Box sx={{ height: '100vh', width: '100%' }}><NavbarOrganization /><Outlet /></Box></ProtectedRouteOrganization>} >
+                        <Route
+                            path="/organization"
+                            element={
+                                <ProtectedRoute userType="organization">
+                                    <Box sx={{ paddingTop: '90px', height: '100vh', width: '100%' }}>
+                                        <NavbarUser userType="organization" />
+                                        <Outlet />
+                                    </Box>
+                                </ProtectedRoute>
+                            }
+                        >
+                            <Route path="about" element={<AboutPage />} />
                             <Route path="volunteers-request" element={<VolunteerRequestsPage />} />
                             <Route path="request/:requestId" element={<RequestDetailsPage />} />
                             <Route path="organization-invitation" element={<OrganizationInvitationDetails />} />
                         </Route>
 
-                        <Route path="/" element={<HomePage />} />
+                        <Route path="/" element={<Box sx={{ height: '100vh', width: '100%' }}><HomePage /></Box>} />
                         <Route path="/login" element={<AuthForms isLogin={true} />} />
                         <Route path="/signup" element={<AuthForms isLogin={false} />} />
                         <Route path="/signup_volunteer" element={<SignupV />} />
-                        <Route path="/signup_organization" element={<SignupO />} />
+                        <Route path="/signup_organization" element={<Box sx={{ height: '100vh', width: '100%' }}><SignupO /></Box>} />
+                        <Route path="/check_organization" element={<CheckOrganization />} />
                     </Routes>
+
                 </PersistGate>
             </Provider >
         </>
     );
 };
-
-export default App;
-
-
+export default App

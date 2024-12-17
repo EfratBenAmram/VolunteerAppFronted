@@ -40,8 +40,6 @@ export interface VolunteerRequests {
   availableTime: string;
   availableDate: Date;
   volunteerTypes?: VolunteerType[] | undefined;
-  positionX: number;
-  positionY: number;
   invitationInd: false;
 }
 

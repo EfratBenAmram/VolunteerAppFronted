@@ -14,6 +14,7 @@ import { UserLogin } from '../models/volunteers';
 
 interface OrganizationState {
     organizations: Organization[];
+    waitings: Organization[];
     selectedOrganization: Organization | undefined;
     loggedInUser: Organization | undefined;
     isConect: boolean;
@@ -24,6 +25,7 @@ interface OrganizationState {
 
 const initialState: OrganizationState = {
     organizations: [],
+    waitings: [],
     selectedOrganization: undefined,
     loggedInUser: undefined,
     isConect: false,
@@ -123,6 +125,9 @@ const organizationSlice = createSlice({
             state.selectedOrganization = undefined;
             state.isConect = false;
         },
+        conectOrganization: (state) => {
+            state.isConect = true;
+        },
     },
     extraReducers: (builder) => {
         // Fetch Organization
@@ -221,7 +226,8 @@ const organizationSlice = createSlice({
             state.loading = false;
             state.organizations.push(action.payload);
             state.selectedOrganization = action.payload;
-            state.isConect = true;
+            state.waitings.push(action.payload);
+            // state.isConect = true;
             state.status = 'succeeded';
         })
         builder.addCase(signupNewOrganization.rejected, (state, action) => {
@@ -257,4 +263,4 @@ const organizationSlice = createSlice({
 });
 
 export default organizationSlice.reducer;
-export const { saveOrganizationData, logoutOrganization } = organizationSlice.actions;
+export const { saveOrganizationData, logoutOrganization, conectOrganization } = organizationSlice.actions;

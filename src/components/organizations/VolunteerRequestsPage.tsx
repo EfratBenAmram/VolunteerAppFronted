@@ -7,7 +7,7 @@ import VolunteerRequestCard from "./VolunteerRequestCard";
 import { AppDispatch } from "../../store/store";
 import { Volunteer } from "../../models/volunteers";
 import { fetchVolunteerTypes } from "../../redux/volunteerTypeSlice";
-import { TextField } from "@mui/material";
+import { TextField, Box, Typography, Grid, FormControl, InputLabel, Select, MenuItem, Checkbox, FormControlLabel, Paper } from "@mui/material";
 
 const VolunteerRequestsPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -145,119 +145,139 @@ const VolunteerRequestsPage: React.FC = () => {
     setCity(value);
     handleFilterChange("city", value);
   };
-  
+
   return (
-    <div>
-      <h2>בקשות</h2>
+    <Box sx={{ maxWidth: 1200, margin: '0 auto', padding: 2 }}>
+      <Typography variant="h4" align="center" gutterBottom>
+        בקשות
+      </Typography>
 
-      <div style={{ marginBottom: "20px", padding: "10px", border: "1px solid #ccc", borderRadius: "10px" }}>
-        <label>
-          כמות מתנדבים מינימלית:
-          <input
-            type="number"
-            value={filters.minAmount}
-            onChange={(e) => handleFilterChange("minAmount", Number(e.target.value))}
-          />
-        </label>
-        <label>
-          כמות מתנדבים מקסימלית:
-          <input
-            type="number"
-            value={filters.maxAmount}
-            onChange={(e) => handleFilterChange("maxAmount", Number(e.target.value))}
-          />
-        </label>
-        <label>
-          גיל מינימלי:
-          <input
-            type="number"
-            value={filters.minAge}
-            onChange={(e) => handleFilterChange("minAge", Number(e.target.value))}
-          />
-        </label>
-        <label>
-          גיל מקסימלי:
-          <input
-            type="number"
-            value={filters.maxAge}
-            onChange={(e) => handleFilterChange("maxAge", Number(e.target.value))}
-          />
-        </label>
-        <label>
-          ניסיון:
-          <input
-            type="checkbox"
-            checked={filters.experience}
-            onChange={(e) => handleFilterChange("experience", e.target.checked)}
-          />
-        </label>
-        <TextField
-          inputRef={inputRef}
-          fullWidth
-          placeholder="Start typing city..."
-          value={city}
-          onChange={handleInputChange}
-        />
-        <label>
-          מגדר:
-          <select
-            value={filters.gender}
-            onChange={(e) => handleFilterChange("gender", e.target.value)}
-          >
-            <option value="">כולם</option>
-            <option value="Male">זכר</option>
-            <option value="Female">נקבה</option>
-          </select>
-        </label>
-        <label>
-          סוג התנדבות:
-          <select
-            value={filters.volunteerTypeId || ""}
-            onChange={(e) => handleFilterChange("volunteerTypeId", e.target.value ? Number(e.target.value) : null)}
-          >
-            <option value="">בחר סוג</option>
-            {volunteerTypes.map((type) => (
-              <option key={type.volunteerTypeId} value={type.volunteerTypeId}>
-                {type.name}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label>
-          זמן התנדבות:
-          <select
-            value={filters.time || ""}
-            onChange={(e) => handleFilterChange("time", e.target.value)}
-          >
-            <option value="">בחר זמן</option>
-            <option value="MORNING">בוקר</option>
-            <option value="AFTERNOON">צהריים</option>
-            <option value="EVENING">ערב</option>
-          </select>
-        </label>
-        <label>
-          יום בשבוע:
-          <select
-            value={filters.dayOfWeek}
-            onChange={(e) => handleFilterChange("dayOfWeek", e.target.value)}
-          >
-            <option value="">בחר יום</option>
-            <option value="ראשון">ראשון</option>
-            <option value="שני">שני</option>
-            <option value="שלישי">שלישי</option>
-            <option value="רביעי">רביעי</option>
-            <option value="חמישי">חמישי</option>
-            <option value="שישי">שישי</option>
-            <option value="שבת">שבת</option>
-          </select>
-        </label>
-      </div>
+      <Paper sx={{ padding: 2, marginBottom: 2 }}>
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6} md={4}>
+            <TextField
+              label="כמות מתנדבים מינימלית"
+              type="number"
+              fullWidth
+              value={filters.minAmount}
+              onChange={(e) => handleFilterChange("minAmount", Number(e.target.value))}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6} md={4}>
+            <TextField
+              label="כמות מתנדבים מקסימלית"
+              type="number"
+              fullWidth
+              value={filters.maxAmount}
+              onChange={(e) => handleFilterChange("maxAmount", Number(e.target.value))}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6} md={4}>
+            <TextField
+              label="גיל מינימלי"
+              type="number"
+              fullWidth
+              value={filters.minAge}
+              onChange={(e) => handleFilterChange("minAge", Number(e.target.value))}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6} md={4}>
+            <TextField
+              label="גיל מקסימלי"
+              type="number"
+              fullWidth
+              value={filters.maxAge}
+              onChange={(e) => handleFilterChange("maxAge", Number(e.target.value))}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6} md={4}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={filters.experience}
+                  onChange={(e) => handleFilterChange("experience", e.target.checked)}
+                />
+              }
+              label="ניסיון"
+            />
+          </Grid>
+          <Grid item xs={12} sm={6} md={4}>
+            <TextField
+              inputRef={inputRef}
+              fullWidth
+              label="עיר"
+              placeholder="Start typing city..."
+              value={city}
+              onChange={handleInputChange}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6} md={4}>
+            <FormControl fullWidth>
+              <InputLabel>מגדר</InputLabel>
+              <Select
+                value={filters.gender}
+                onChange={(e) => handleFilterChange("gender", e.target.value)}
+              >
+                <MenuItem value="">כולם</MenuItem>
+                <MenuItem value="Male">זכר</MenuItem>
+                <MenuItem value="Female">נקבה</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={6} md={4}>
+            <FormControl fullWidth>
+              <InputLabel>סוג התנדבות</InputLabel>
+              <Select
+                value={filters.volunteerTypeId || ""}
+                onChange={(e) => handleFilterChange("volunteerTypeId", e.target.value ? Number(e.target.value) : null)}
+              >
+                <MenuItem value="">בחר סוג</MenuItem>
+                {volunteerTypes.map((type) => (
+                  <MenuItem key={type.volunteerTypeId} value={type.volunteerTypeId}>
+                    {type.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={6} md={4}>
+            <FormControl fullWidth>
+              <InputLabel>זמן התנדבות</InputLabel>
+              <Select
+                value={filters.time || ""}
+                onChange={(e) => handleFilterChange("time", e.target.value)}
+              >
+                <MenuItem value="">בחר זמן</MenuItem>
+                <MenuItem value="MORNING">בוקר</MenuItem>
+                <MenuItem value="AFTERNOON">צהריים</MenuItem>
+                <MenuItem value="EVENING">ערב</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={6} md={4}>
+            <FormControl fullWidth>
+              <InputLabel>יום בשבוע</InputLabel>
+              <Select
+                value={filters.dayOfWeek}
+                onChange={(e) => handleFilterChange("dayOfWeek", e.target.value)}
+              >
+                <MenuItem value="">בחר יום</MenuItem>
+                <MenuItem value="ראשון">ראשון</MenuItem>
+                <MenuItem value="שני">שני</MenuItem>
+                <MenuItem value="שלישי">שלישי</MenuItem>
+                <MenuItem value="רביעי">רביעי</MenuItem>
+                <MenuItem value="חמישי">חמישי</MenuItem>
+                <MenuItem value="שישי">שישי</MenuItem>
+                <MenuItem value="שבת">שבת</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+        </Grid>
+      </Paper>
 
-
-      {/* Volunteers Display */}
-      {
-        Array.isArray(filteredVolunteers) && filteredVolunteers.map((volunteer) => (
-          <div key={volunteer.volunteerId}>
+      <Grid container spacing={2}>
+        {Array.isArray(filteredVolunteers) && filteredVolunteers.map((volunteer) => (
+          <Grid item xs={12} sm={6} md={4} key={volunteer.volunteerId}>
             {Array.isArray(volunteer.volunteerRequests) && volunteer.volunteerRequests.map((request) => (
               <Link
                 to={`/organization/request/${request.requestId}`}
@@ -267,15 +287,15 @@ const VolunteerRequestsPage: React.FC = () => {
                 <VolunteerRequestCard volunteer={volunteer} request={request} />
               </Link>
             ))}
-          </div>
-        ))
-
-      }
-    </div >
+          </Grid>
+        ))}
+      </Grid>
+    </Box>
   );
 };
 
 export default VolunteerRequestsPage;
+
 function loadScript(src: string): Promise<void> {
   return new Promise((resolve, reject) => {
     const script = document.createElement('script');

@@ -100,9 +100,9 @@ const SignupO: React.FC = () => {
                 recommendationPdfPaths: recommendationPdfPaths,
                 region: formData.region,
             }
-            const result = await dispatch(signupNewOrganization({ organizationData, image: formData.image }));
-            await axiosInstance.post('http://localhost:8080/api/sendOrganizationDetails', organizationMail);
-            if (result.meta.requestStatus === 'fulfilled') navigate('/organization');
+            const result1 = await dispatch(signupNewOrganization({ organizationData, image: formData.image }));
+            const result2 = await axiosInstance.post('http://localhost:8080/api/sendOrganizationDetails', organizationMail);
+            if (result1.meta.requestStatus === 'fulfilled' && result2 != "") navigate('/check_organization');
         } catch (error) {
             console.error('Signup error:', error);
          } finally {

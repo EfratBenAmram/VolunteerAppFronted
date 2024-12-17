@@ -1,0 +1,81 @@
+import React, { useState, useEffect } from "react";
+import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
+import axios from "axios";
+
+interface MapComponentProps {
+  address: string; // הכתובת שברצונך להציג על המפה
+}
+
+const MapComponent: React.FC<MapComponentProps> = ({ address }) => {
+  const [location, setLocation] = useState<{ lat: number; lng: number } | null>(
+    null
+  );
+
+  // טען את ה-Google Maps API
+  const { isLoaded } = useJsApiLoader({
+    googleMapsApiKey: "AIzaSyBn7qvgs2P_XzFW3iLYNjL6uFa7JRU7-x4", // החלף במפתח ה-API שלך
+  });
+
+  // המרת כתובת לקואורדינטות
+  useEffect(() => {
+    const fetchCoordinates = async () => {
+      try {
+        const response = await axios.get(
+          `https://maps.googleapis.com/maps/api/geocode/json`,
+          {
+            params: {
+              address: address,
+              key: "AIzaSyBn7qvgs2P_XzFW3iLYNjL6uFa7JRU7-x4",
+            },
+          }
+        );
+        const results = response.data.results;
+        if (results && results.length > 0) {
+          const { lat, lng } = results[0].geometry.location;
+          setLocation({ lat, lng });
+        } else {
+          console.error("No results found for the address.");
+        }
+      } catch (error) {
+        console.error("Error fetching coordinates:", error);
+      }
+    };
+
+    if (address) {
+      fetchCoordinates();
+    }
+  }, [address]);
+
+  if (!isLoaded) {
+    return <p>Loading map...</p>;
+  }
+
+  const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+    address
+  )}`;
+
+  return (
+    <a
+      href={googleMapsUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      style={{ textDecoration: "none" }}
+    >
+      <div style={{ height: "210px", width: "100%" }}>
+        {location ? (
+          <GoogleMap
+            center={location}
+            zoom={15}
+            mapContainerStyle={{ width: "100%", height: "100%" }}
+          >
+            <Marker position={location} />
+          </GoogleMap>
+        ) : (
+          <p>Loading location...</p>
+        )}
+      </div>
+    </a>
+  );
+};
+
+export default MapComponent;

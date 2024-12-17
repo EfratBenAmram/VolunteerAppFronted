@@ -5,6 +5,7 @@ import { RootState, AppDispatch } from '../../store/store';
 import { useNavigate } from 'react-router-dom';
 import { TextField, Button, Checkbox, FormControl, InputLabel, Select, MenuItem, CircularProgress, Box, Typography, Card, CardContent, InputAdornment, FormHelperText } from '@mui/material';
 import { Person, DateRange, PhotoCamera, Group } from '@mui/icons-material';
+import axios from 'axios';
 
 const SignupV: React.FC = () => {
     const [formData, setFormData] = useState({
@@ -15,6 +16,9 @@ const SignupV: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
     const selectedVolunteer = useSelector((state: RootState) => state.volunteers.selectedVolunteer);
+    const axiosInstance = axios.create({
+        withCredentials: true,
+    });
 
     const validate = () => {
         const age = new Date().getFullYear() - new Date(formData.birth).getFullYear();
@@ -79,21 +83,21 @@ const SignupV: React.FC = () => {
 
     const handleAutocomplete = () => {
         const input = document.getElementById('googleAutocomplete') as HTMLInputElement;
-    
+
         if (input) {
             const autocomplete = new window.google.maps.places.Autocomplete(input, {
                 types: ['(cities)'],
                 componentRestrictions: { country: 'il' },
             });
-    
+
             autocomplete.addListener('place_changed', () => {
                 const place = autocomplete.getPlace();
-    
+
                 if (place && place.address_components) {
                     const cityComponent = place.address_components.find((component) =>
                         component.types.includes('locality')
                     );
-    
+
                     if (cityComponent) {
                         const selectedCity = cityComponent.long_name;
                         setFormData((prev) => ({ ...prev, city: selectedCity }));
@@ -109,7 +113,7 @@ const SignupV: React.FC = () => {
             });
         }
     };
-    
+
     useEffect(() => {
         const loadGoogleMaps = async () => {
             try {
@@ -119,10 +123,10 @@ const SignupV: React.FC = () => {
                 console.error("Error loading Google Maps script:", error);
             }
         };
-    
+
         loadGoogleMaps();
-    }, []); 
-    
+    }, []);
+
     return (
         <Box sx={{ backgroundColor: '#e8f5e9', width: '100%', height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 5 }}>
             <Card sx={{ width: '100%', maxWidth: 600, borderRadius: 3, boxShadow: 10, padding: 3, backgroundColor: '#ffffff' }}>
