@@ -1,18 +1,22 @@
 import { Box, Typography, Paper } from '@mui/material';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
-import { RootState } from '../../store/store';
+import { RootState, AppDispatch } from '../../store/store';
+import { conectOrganization } from '../../redux/organizationSlice';
 
 const CheckOrganization = () => {
     const navigate = useNavigate();
+    const dispatch = useDispatch<AppDispatch>();
     const { isConect } = useSelector((state: RootState) => state.organization);
-
+    const { connect } = useSelector((state: RootState) => state.organization.selectedOrganization);
+    
     useEffect(() => {
-        if (isConect) {
+        if (connect) {  
+            dispatch(conectOrganization());
             navigate('/organization');
         }
-    }, [isConect, navigate]);
+    }, [connect, navigate, dispatch]);
 
     if (isConect) {
         return null;

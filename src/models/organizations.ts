@@ -25,5 +25,5 @@ export interface Organization {
     orgGoals: string;
     region: string;
     imageOrg: string;
-    
+    connect: boolean;
 }

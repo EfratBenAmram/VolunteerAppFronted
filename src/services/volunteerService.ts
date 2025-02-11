@@ -59,3 +59,7 @@ export const getVolunteerWithImage = async (id: number): Promise<any> => {
     const response = await axiosInstance.get(`volunteer/getDto/${id}`);
     return response.data;
 };
+
+export const signoutVolunteer = async (): Promise<void> => {
+    await axiosInstance.post('http://localhost:8080/api/volunteer/signout');
+};

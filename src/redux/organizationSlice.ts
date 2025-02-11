@@ -14,7 +14,6 @@ import { UserLogin } from '../models/volunteers';
 
 interface OrganizationState {
     organizations: Organization[];
-    waitings: Organization[];
     selectedOrganization: Organization | undefined;
     loggedInUser: Organization | undefined;
     isConect: boolean;
@@ -25,7 +24,6 @@ interface OrganizationState {
 
 const initialState: OrganizationState = {
     organizations: [],
-    waitings: [],
     selectedOrganization: undefined,
     loggedInUser: undefined,
     isConect: false,
@@ -156,7 +154,6 @@ const organizationSlice = createSlice({
         builder.addCase(fetchOrganizationById.fulfilled, (state, action: PayloadAction<Organization>) => {
             state.loading = false;
             state.selectedOrganization = action.payload;
-            state.status = 'succeeded';
         })
         builder.addCase(fetchOrganizationById.rejected, (state, action) => {
             state.loading = false;
@@ -173,7 +170,6 @@ const organizationSlice = createSlice({
         builder.addCase(createNewOrganization.fulfilled, (state, action: PayloadAction<Organization>) => {
             state.loading = false;
             state.organizations.push(action.payload);
-            state.status = 'succeeded';
         })
         builder.addCase(createNewOrganization.rejected, (state, action) => {
             state.loading = false;
@@ -190,7 +186,6 @@ const organizationSlice = createSlice({
         builder.addCase(updateExistingOrganization.fulfilled, (state, action) => {
             state.loading = false;
             state.selectedOrganization = action.payload;
-            state.status = 'succeeded';
         })
         builder.addCase(updateExistingOrganization.rejected, (state, action) => {
             state.loading = false;
@@ -208,7 +203,6 @@ const organizationSlice = createSlice({
         builder.addCase(deleteExistingOrganization.fulfilled, (state, action: PayloadAction<number>) => {
             state.loading = false;
             state.organizations = state.organizations.filter((v) => v.organizationId !== action.payload);
-            state.status = 'succeeded';
         })
         builder.addCase(deleteExistingOrganization.rejected, (state, action) => {
             state.loading = false;
@@ -226,9 +220,7 @@ const organizationSlice = createSlice({
             state.loading = false;
             state.organizations.push(action.payload);
             state.selectedOrganization = action.payload;
-            state.waitings.push(action.payload);
             // state.isConect = true;
-            state.status = 'succeeded';
         })
         builder.addCase(signupNewOrganization.rejected, (state, action) => {
             state.loading = false;
@@ -246,8 +238,7 @@ const organizationSlice = createSlice({
         builder.addCase(loginExistingOrganization.fulfilled, (state, action) => {
             state.loading = false;
             state.selectedOrganization = action.payload;
-            state.isConect = true;
-            state.status = 'succeeded';
+            // state.isConect = true;
         })
         builder.addCase(loginExistingOrganization.rejected, (state, action) => {
             state.loading = false;

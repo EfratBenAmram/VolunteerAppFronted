@@ -1,12 +1,46 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../store/store';
-import { Card, CardContent, CardMedia, Typography, Box, Grid } from '@mui/material';
-
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { AppDispatch, RootState } from '../../store/store';
+import { Card, CardContent, CardMedia, Typography, Box, Grid, Button } from '@mui/material';
+import { fetchOrganization, updateExistingOrganization } from '../../redux/organizationSlice';
+import axios from 'axios';
 const AdminPage: React.FC = () => {
-    const { waitings } = useSelector((state: RootState) => state.organization);
+    const dispatch = useDispatch<AppDispatch>();
 
-    if (!waitings || waitings.length === 0) {
+    const { organizations, selectedOrganization } = useSelector((state: RootState) => state.organization);
+    const pendingOrganizations = organizations.filter(org => !org.connect);
+
+    useEffect(() => {
+        dispatch(fetchOrganization());
+    }, [dispatch]);
+
+    const handleApprove = async (organizationId: number) => {
+        const organization = organizations.find(org => org.organizationId === organizationId);
+        if (organization) {
+            dispatch(updateExistingOrganization({
+                id: organizationId,
+                organization: { ...organization, connect: true },
+            }));
+        }
+        const axiosInstance = axios.create({ withCredentials: true });
+
+        const emailPayload = {
+            email: "efrat.benamram1@gmail.com",
+            subject: "נכנסת לאירגון!!!!",
+            messageBody: `
+                  <div>
+                    <p>בקשתך אושרה בהצלחה</p>
+                `,
+            logoPath: selectedOrganization?.imageOrg,
+            logoLink: "http://localhost:5173/login/",
+        };
+
+        await axiosInstance.post('http://localhost:8080/api/sendEmail', emailPayload);
+        dispatch(fetchOrganization());
+    };
+
+
+    if (pendingOrganizations.length === 0) {
         return (
             <Box
                 sx={{
@@ -44,7 +78,7 @@ const AdminPage: React.FC = () => {
                 ארגונים ממתינים לאישור
             </Typography>
             <Grid container spacing={4}>
-                {waitings.map((organization) => (
+                {pendingOrganizations.map((organization) => (
                     <Grid item xs={12} sm={6} md={4} key={organization.organizationId}>
                         <Card
                             sx={{
@@ -56,12 +90,6 @@ const AdminPage: React.FC = () => {
                                 },
                             }}
                         >
-                            <CardMedia
-                                component="img"
-                                height="140"
-                                image={organization.imageOrg || '/path/to/default-image.jpg'}
-                                alt={organization.name}
-                            />
                             <CardContent>
                                 <Typography variant="h6" sx={{ fontWeight: 600 }}>
                                     {organization.name}
@@ -78,6 +106,15 @@ const AdminPage: React.FC = () => {
                                 <Typography variant="body2" color="text.secondary">
                                     <strong>אזור:</strong> {organization.region}
                                 </Typography>
+                                <Box sx={{ marginTop: 2, textAlign: 'center' }}>
+                                    <Button
+                                        variant="contained"
+                                        color="primary"
+                                        onClick={() => handleApprove(organization.organizationId)}
+                                    >
+                                        אישור ארגון זה
+                                    </Button>
+                                </Box>
                             </CardContent>
                         </Card>
                     </Grid>
@@ -85,7 +122,6 @@ const AdminPage: React.FC = () => {
             </Grid>
         </Box>
     );
-
 };
 
 export default AdminPage;

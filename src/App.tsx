@@ -19,6 +19,7 @@ import RequestDetailsPage from './components/organizations/RequestDetailsPage';
 import ThankYou from './components/volunteer/ThankYou';
 import AboutPage from './components/AboutPage';
 import CheckOrganization from './components/auth/CheckOrganization';
+import AdminPage from './components/organizations/AdminPage';
 
 const App: React.FC = () => {
     return (
@@ -59,6 +60,7 @@ const App: React.FC = () => {
                             <Route path="volunteers-request" element={<VolunteerRequestsPage />} />
                             <Route path="request/:requestId" element={<RequestDetailsPage />} />
                             <Route path="organization-invitation" element={<OrganizationInvitationDetails />} />
+                            <Route path="admin-page" element={<AdminPage />} />
                         </Route>
 
                         <Route path="/" element={<Box sx={{ height: '100vh', width: '100%' }}><HomePage /></Box>} />

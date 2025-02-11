@@ -42,7 +42,7 @@ const LoginForm: React.FC = () => {
                 result = await dispatch(loginExistingVolunteers(loginData));
             } else { result = await dispatch(loginExistingOrganization(loginData)); }
             if (result.meta.requestStatus === 'fulfilled') {
-                navigate(role === 'volunteer' ? '/volunteer' : '/organization');
+                navigate(role === 'volunteer' ? '/volunteer' : '/check_organization');
             } else {
                 alert('Login failed');
                 navigate('/signup');

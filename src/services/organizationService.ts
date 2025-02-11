@@ -68,3 +68,7 @@ export const uploadFiles = async (files: File[]) => {
         throw error;
     }
 };
+
+export const signoutOrganization = async (): Promise<void> => {
+    await axiosInstance.post('http://localhost:8080/api/organization/signout');
+};

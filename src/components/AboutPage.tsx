@@ -82,9 +82,10 @@ const AboutPage = () => {
                                 variant="h6"
                                 component="p"
                                 sx={{
-                                    px: 2,
+                                    px: 5,
                                     fontFamily: 'Comic Sans MS, Arial, sans-serif',
                                     lineHeight: 1.4,
+                                    fontSize: { xs: '1.2rem', md: '1.5rem' },
                                 }}
                             >
                                 {section.text}

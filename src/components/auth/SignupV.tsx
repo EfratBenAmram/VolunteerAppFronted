@@ -55,13 +55,13 @@ const SignupV: React.FC = () => {
             try {
                 const result = await dispatch(signupNewVolunteer({ volunteerData, image: formData.image }));
                 if (result.meta.requestStatus === 'fulfilled') {
-                    navigate('/volunteer');
+                    alert('נרשמת בהצלחה!!');
                 } else if (result.payload?.status === 409) {
                     alert('This email already exists. enter with login');
-                    navigate('/login');
                 } else {
                     console.error('Signup failed:', result);
                 }
+                navigate('/login');
             } catch (error) {
                 console.error('Signup Error in handleSubmit:', error);
             }

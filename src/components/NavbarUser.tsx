@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { AppBar, Toolbar, Button, Typography, Container, Box, Paper, Divider } from '@mui/material';
-import { Link, Navigate, Route } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../store/store';
-import { logoutOrganization } from "../redux/organizationSlice";
+import { AppDispatch, RootState } from '../store/store';
+import { logoutOrganization, updateExistingOrganization } from "../redux/organizationSlice";
 import { logoutVolunteer } from "../redux/volunteerSlice";
-import { getOrganizationWithImage } from '../services/organizationService';
-import { getVolunteerWithImage } from '../services/volunteerService';
+import { getOrganizationWithImage, signoutOrganization } from '../services/organizationService';
+import { getVolunteerWithImage, signoutVolunteer } from '../services/volunteerService';
 import imagePath from '../assets/images/image.jpg';
+import { persistor } from '../store/store';
 
 type UserType = 'organization' | 'volunteer';
 
@@ -16,7 +17,6 @@ interface NavbarUserProps {
 }
 
 const NavbarUser: React.FC<NavbarUserProps> = ({ userType }) => {
-    const dispatch = useDispatch();
     const { selectedOrganization } = useSelector((state: RootState) => state.organization);
     const { selectedVolunteer } = useSelector((state: RootState) => state.volunteers);
     const [imageSrc, setImageSrc] = useState<string | null>(null);
@@ -24,6 +24,7 @@ const NavbarUser: React.FC<NavbarUserProps> = ({ userType }) => {
 
     const user = userType === 'organization' ? selectedOrganization : selectedVolunteer;
     const userId = userType === 'organization' ? user?.organizationId : user?.volunteerId;
+    const dispatch = useDispatch<AppDispatch>();
 
     useEffect(() => {
         const fetchImage = async () => {
@@ -51,9 +52,12 @@ const NavbarUser: React.FC<NavbarUserProps> = ({ userType }) => {
     const handleLogout = () => {
         if (userType === 'organization') {
             dispatch(logoutOrganization());
+            signoutOrganization();
         } else {
             dispatch(logoutVolunteer());
+            signoutVolunteer();
         }
+        persistor.purge();
         window.location.href = '/';
     };
 
@@ -72,9 +76,9 @@ const NavbarUser: React.FC<NavbarUserProps> = ({ userType }) => {
             { to: "volunteers-request", label: "בקשות מתנדבים" },
             { to: "organization-invitation", label: "הזמנות ארגון" },
             { to: "about", label: "אודות" },
-            ...(selectedOrganization?.roles?.includes(3)
-            ? [{ to: "admin-page", label: "עמוד מנהל" }]
-            : []),
+            ...(selectedOrganization?.roles?.some(role => role.id === 3)
+                ? [{ to: "admin-page", label: "עמוד מנהל" }]
+                : []),
         ]
         : [
             { to: "volunteer-details", label: "פרטי מתנדב" },
@@ -163,7 +167,7 @@ const NavbarUser: React.FC<NavbarUserProps> = ({ userType }) => {
                                     {link.label}
                                 </Button>
                             ))}
-                            
+
                         </Box>
 
                         {/* תמונה + לוגאאוט */}

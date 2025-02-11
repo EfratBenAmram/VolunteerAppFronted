@@ -3,7 +3,7 @@ import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
 import axios from "axios";
 
 interface MapComponentProps {
-  address: string; // הכתובת שברצונך להציג על המפה
+  address: string;
 }
 
 const MapComponent: React.FC<MapComponentProps> = ({ address }) => {
@@ -11,12 +11,10 @@ const MapComponent: React.FC<MapComponentProps> = ({ address }) => {
     null
   );
 
-  // טען את ה-Google Maps API
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: "AIzaSyBn7qvgs2P_XzFW3iLYNjL6uFa7JRU7-x4", // החלף במפתח ה-API שלך
+    googleMapsApiKey: "AIzaSyBn7qvgs2P_XzFW3iLYNjL6uFa7JRU7-x4", 
   });
 
-  // המרת כתובת לקואורדינטות
   useEffect(() => {
     const fetchCoordinates = async () => {
       try {

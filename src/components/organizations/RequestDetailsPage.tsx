@@ -67,7 +67,6 @@ const RequestDetailsPage: React.FC = () => {
         `,
           logoPath: selectedOrganization?.imageOrg,
           logoLink: "http://localhost:5173/volunteer/volunteer-invitation",
-          sendTime: new Date().toISOString(),
         };
 
         await axiosInstance.post('http://localhost:8080/api/sendEmail', emailPayload);
@@ -198,6 +197,10 @@ const RequestDetailsPage: React.FC = () => {
           <Typography>No reviews for this volunteer.</Typography>
         )}
 
+          <Button variant="contained" color="primary" onClick={handleOpen}>
+            אני מעוניין להזמין
+          </Button>
+        
         <VolunteerInvitationForm
           open={open}
           onClose={handleClose}
@@ -218,7 +221,7 @@ const RequestDetailsPage: React.FC = () => {
           Your invitation has been successfully sent. Additional details will be sent via email.
         </Alert>
       </Snackbar>
-      
+
     </Box>
   );
 };

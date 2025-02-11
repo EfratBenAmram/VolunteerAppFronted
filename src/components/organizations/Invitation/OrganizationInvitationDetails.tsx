@@ -4,7 +4,7 @@ import { RootState } from '../../../store/store';
 import { fetchVolunteerInvitations } from '../../../redux/volunteerInvitationSlice';
 import { VolunteerInvitation } from '../../../models/invitation';
 import { AppDispatch } from '../../../store/store';
-import { Typography, Box, Grid, ToggleButton, ToggleButtonGroup, CircularProgress, Alert, Paper, Button } from '@mui/material';
+import { Typography, Box, Grid, ToggleButton, ToggleButtonGroup, Paper, Button } from '@mui/material';
 import axios from 'axios';
 import InvitationCard from './InvitationCard';
 
