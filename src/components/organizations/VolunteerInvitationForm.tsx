@@ -60,8 +60,8 @@ const VolunteerInvitationForm: React.FC<VolunteerInvitationFormProps> = ({
   const handleSelect = async (address: string) => {
     setUserAddress(address);
     try {
-      const API_KEY = "AIzaSyDm0YRkpIrMI0bHOmw76qF-YyjqtjhPLeA";
-      const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
+      const API_KEY = "AIzaSyANfIskDROp9Q9UCONXmTuWiT9RX9WbRdA";
+      const url = `https://maps.googleapis.com/maps/api/geocode/json?address=?${encodeURIComponent(
         address
       )}&key=${API_KEY}`;
       const response = await fetch(url);
@@ -78,6 +78,18 @@ const VolunteerInvitationForm: React.FC<VolunteerInvitationFormProps> = ({
     }
   };
 
+  // const handleSelect = async (address: string) => {
+  //   setUserAddress(address);
+  //   try {
+  //     const response = await fetch(`/api/geocode?address=${encodeURIComponent(address)}`);
+  //     const data = await response.json();
+  //     setAddressValid(data.valid);
+  //     setFormError(data.valid ? "" : "הכתובת אינה תקפה.");
+  //   } catch (error) {
+  //     setFormError("שגיאה באימות הכתובת.");
+  //   }
+  // };
+  
   const validateForm = () => {
     // if (!userAddress || !addressValid) {
     //   setFormError("אנא ודא שהכתובת תקפה.");

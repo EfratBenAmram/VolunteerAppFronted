@@ -112,7 +112,7 @@ const VolunteerRequestsPage: React.FC = () => {
   useEffect(() => {
     const loadGoogleMaps = async () => {
       try {
-        await loadScript('https://maps.googleapis.com/maps/api/js?key=AIzaSyDm0YRkpIrMI0bHOmw76qF-YyjqtjhPLeA&libraries=places');
+        await loadScript('https://maps.googleapis.com/maps/api/js?key=?&libraries=places');
         if (inputRef.current && window.google) {
           autocompleteRef.current = new window.google.maps.places.Autocomplete(inputRef.current, {
             types: ['(cities)'],
@@ -139,13 +139,14 @@ const VolunteerRequestsPage: React.FC = () => {
 
     loadGoogleMaps();
   }, []);
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  
+  const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setCity(value);
     handleFilterChange("city", value);
-  };
 
+  };
+  
   return (
     <Box sx={{ maxWidth: 1200, margin: '0 auto', padding: 2 }}>
       <Typography variant="h4" align="center" gutterBottom>

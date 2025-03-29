@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { AppDispatch, RootState } from '../../store/store';
-import { Card, CardContent, CardMedia, Typography, Box, Grid, Button } from '@mui/material';
+import { Card, CardContent, Typography, Box, Grid, Button } from '@mui/material';
 import { fetchOrganization, updateExistingOrganization } from '../../redux/organizationSlice';
 import axios from 'axios';
 const AdminPage: React.FC = () => {

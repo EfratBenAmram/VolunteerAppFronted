@@ -12,7 +12,7 @@ const MapComponent: React.FC<MapComponentProps> = ({ address }) => {
   );
 
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: "AIzaSyBn7qvgs2P_XzFW3iLYNjL6uFa7JRU7-x4", 
+    googleMapsApiKey: "", 
   });
 
   useEffect(() => {
@@ -23,7 +23,7 @@ const MapComponent: React.FC<MapComponentProps> = ({ address }) => {
           {
             params: {
               address: address,
-              key: "AIzaSyBn7qvgs2P_XzFW3iLYNjL6uFa7JRU7-x4",
+              key: "AIzaSyANfIskDROp9Q9UCONXmTuWiT9RX9WbRdA",
             },
           }
         );
@@ -43,6 +43,22 @@ const MapComponent: React.FC<MapComponentProps> = ({ address }) => {
       fetchCoordinates();
     }
   }, [address]);
+
+  // useEffect(() => {
+  //   const fetchCoordinates = async () => {
+  //     try {
+  //       const response = await fetch(`/api/coordinates?address=${encodeURIComponent(address)}`);
+  //       const data = await response.json();
+  //       setLocation({ lat: data.lat, lng: data.lng });
+  //     } catch (error) {
+  //       console.error("Error fetching coordinates:", error);
+  //     }
+  //   };
+
+  //   if (address) {
+  //     fetchCoordinates();
+  //   }
+  // }, [address]);
 
   if (!isLoaded) {
     return <p>Loading map...</p>;

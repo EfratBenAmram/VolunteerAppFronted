@@ -113,17 +113,36 @@ const SignupV: React.FC = () => {
             });
         }
     };
-
+    // const handleAutocomplete = async () => {
+    //     const input = document.getElementById('googleAutocomplete') as HTMLInputElement;
+    
+    //     if (input) {
+    //         try {
+    //             const response = await axios.get(`http://localhost:8080/api/maps/autocomplete?input=${input.value}`);
+    //             const place = response.data;
+                
+    //             if (place && place.predictions) {
+    //                 const selectedCity = place.predictions[0].description;
+    //                 setFormData((prev) => ({ ...prev, city: selectedCity }));
+    //             } else {
+    //                 alert('לא נמצאו תוצאות.');
+    //             }
+    //         } catch (error) {
+    //             console.error('Error in autocomplete request:', error);
+    //             alert('לא הצלחנו להתחבר לשירות Google Maps.');
+    //         }
+    //     }
+    // };
+    
     useEffect(() => {
         const loadGoogleMaps = async () => {
             try {
-                await loadScript('https://maps.googleapis.com/maps/api/js?key=AIzaSyDm0YRkpIrMI0bHOmw76qF-YyjqtjhPLeA&libraries=places');
+                await loadScript('https://maps.googleapis.com/maps/api/js?key=AIzaSyANfIskDROp9Q9UCONXmTuWiT9RX9WbRdA&libraries=places');
                 console.log("Google Maps script loaded successfully.");
             } catch (error) {
                 console.error("Error loading Google Maps script:", error);
             }
         };
-
         loadGoogleMaps();
     }, []);
 
